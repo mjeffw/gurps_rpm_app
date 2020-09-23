@@ -18,10 +18,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    // WidgetsBinding.instance.addPostFrameCallback((_) => _scaffoldKey
-    //     .currentState
-    //     .showSnackBar(SnackBar(content: Text('Welcome User'))));
   }
 
   @override
@@ -33,7 +29,7 @@ class _HomePageState extends State<HomePage> {
         AdaptiveScaffoldDestination(title: 'Create Ritual', icon: Icons.home),
         AdaptiveScaffoldDestination(
             title: 'Gather Energy', icon: Icons.add_sharp),
-        AdaptiveScaffoldDestination(title: 'Options', icon: Icons.engineering),
+        AdaptiveScaffoldDestination(title: 'Options', icon: Icons.cake),
       ],
       body: _pageAtIndex(_pageIndex),
       onNavigationIndexChange: (newIndex) {
