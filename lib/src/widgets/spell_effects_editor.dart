@@ -41,31 +41,45 @@ class SpellEffectEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color oddBackground = Theme.of(context).accentColor.withOpacity(0.05);
     return IntrinsicHeight(
-      child: Row(
-        children: [
-          DropdownButton(
-            items: _levelItems(context),
-            onChanged: (value) =>
-                Provider.of<CastingModel>(context, listen: false)
-                    .updateInherentSpellEffectLevel(index, value),
-            value: effect.level,
-          ),
-          const Padding(
-            padding: EdgeInsets.only(right: 4.0),
-          ),
-          DropdownButton(
-            items: _effectItems(context),
-            onChanged: (value) =>
-                Provider.of<CastingModel>(context, listen: false)
-                    .updateInherentSpellEffectEffect(index, value),
-            value: effect.effect,
-          ),
-          const Padding(
-            padding: EdgeInsets.only(right: 4.0),
-          ),
-          Text('${effect.path}'),
-        ],
+      child: Container(
+        color: (index.isOdd) ? oddBackground : null,
+        padding: EdgeInsets.only(right: 24.0),
+        child: Row(
+          children: [
+            DropdownButton(
+              items: _levelItems(context),
+              onChanged: (value) =>
+                  Provider.of<CastingModel>(context, listen: false)
+                      .updateInherentSpellEffectLevel(index, value),
+              value: effect.level,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(right: 4.0),
+            ),
+            DropdownButton(
+              items: _effectItems(context),
+              onChanged: (value) =>
+                  Provider.of<CastingModel>(context, listen: false)
+                      .updateInherentSpellEffectEffect(index, value),
+              value: effect.effect,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(right: 4.0),
+            ),
+            Text('${effect.path}'),
+            Spacer(),
+            IconButton(
+              icon: Icon(
+                Icons.remove_circle_rounded,
+                color: Colors.red,
+              ),
+              onPressed: () => Provider.of<CastingModel>(context, listen: false)
+                  .removeInherentSpellEffect(index),
+            ),
+          ],
+        ),
       ),
     );
   }
