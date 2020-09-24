@@ -6,6 +6,7 @@ import 'package:gurps_rpm_app/src/widgets/dynamic_list_header.dart';
 import 'package:gurps_rpm_app/src/widgets/spell_effects_editor.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 class CreateRitualPage extends StatelessWidget {
   @override
@@ -112,7 +113,15 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
                   style:
                       textTheme.subtitle1.copyWith(fontStyle: FontStyle.italic),
                 ),
-                Text('0 (×1).', style: TextStyle(fontSize: 16.0))
+                Selector<CastingModel, Tuple2<int, int>>(
+                    selector: (_, model) => Tuple2<int, int>(
+                        model.greaterEffects, model.effectsMultiplier),
+                    builder: (context, tuple, child) {
+                      return Text(
+                        '${tuple.item1} (×${tuple.item2}).',
+                        style: TextStyle(fontSize: 16.0),
+                      );
+                    }),
               ],
             ),
           ),
