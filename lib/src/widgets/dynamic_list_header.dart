@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DynamicListHeader extends StatelessWidget {
-  const DynamicListHeader({Key key, this.title, this.onPressed}) : super(key: key);
+  const DynamicListHeader({Key key, this.title, this.onPressed})
+      : super(key: key);
 
   final String title;
   final VoidCallback onPressed;
@@ -26,7 +27,7 @@ class DynamicListHeader extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.add_box_rounded,
-              color: Colors.green,
+              color: Colors.blue,
             ),
             onPressed: onPressed,
           ),
