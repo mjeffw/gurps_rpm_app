@@ -26,6 +26,8 @@ class CastingModel with ChangeNotifier {
     }
   }
 
+  List<SpellEffect> get inherentSpellEffects => _casting.ritual.effects;
+
   void addInherentSpellEffect(String pathName) {
     print('add inherent spell effect: $pathName');
     Path path = Path.fromString(pathName);
@@ -35,5 +37,25 @@ class CastingModel with ChangeNotifier {
     Ritual updated = _casting.ritual.addSpellEffect(effect);
     _casting = _casting.copyWith(ritual: updated);
     notifyListeners();
+  }
+
+  void updateInherentSpellEffectLevel(int index, Level level) {
+    var effect = _casting.ritual.effects[index];
+    SpellEffect value = effect.withLevel(level);
+    if (value != effect) {
+      Ritual updated = _casting.ritual.updateSpellEffect(index, value);
+      _casting = _casting.copyWith(ritual: updated);
+      notifyListeners();
+    }
+  }
+
+  void updateInherentSpellEffectEffect(int index, Effect e) {
+    var effect = _casting.ritual.effects[index];
+    SpellEffect value = effect.withEffect(e);
+    if (value != effect) {
+      Ritual updated = _casting.ritual.updateSpellEffect(index, value);
+      _casting = _casting.copyWith(ritual: updated);
+      notifyListeners();
+    }
   }
 }
