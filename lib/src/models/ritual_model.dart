@@ -25,4 +25,15 @@ class CastingModel with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void addInherentSpellEffect(String pathName) {
+    print('add inherent spell effect: $pathName');
+    Path path = Path.fromString(pathName);
+    SpellEffect effect =
+        SpellEffect(path, effect: Effect.sense, level: Level.lesser);
+
+    Ritual updated = _casting.ritual.addSpellEffect(effect);
+    _casting = _casting.copyWith(ritual: updated);
+    notifyListeners();
+  }
 }
