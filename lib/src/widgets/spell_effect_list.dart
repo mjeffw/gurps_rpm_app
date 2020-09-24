@@ -12,7 +12,7 @@ class SpellEffectList extends StatelessWidget {
     Key key,
   }) : super(key: key);
 
-  static List<String> pathOptions = [
+  static List<String> _pathOptions = [
     'Body',
     'Chance',
     'Crossroads',
@@ -28,7 +28,7 @@ class SpellEffectList extends StatelessWidget {
     showMaterialSelectionPicker(
         context: context,
         title: 'Select Path:',
-        items: pathOptions,
+        items: _pathOptions,
         selectedItem: 'Body',
         onChanged: (value) => Provider.of<CastingModel>(context, listen: false)
             .addInherentSpellEffect(value));
@@ -50,9 +50,7 @@ class SpellEffectList extends StatelessWidget {
               widgets
                   .add(SpellEffectEditor(effect: effects[index], index: index));
             }
-            return Column(
-              children: widgets,
-            );
+            return Column(children: widgets);
           },
         ),
       ],

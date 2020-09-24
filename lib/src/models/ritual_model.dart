@@ -12,6 +12,8 @@ class CastingModel with ChangeNotifier {
 
   int get greaterEffects => _ritual.greaterEffects;
 
+  get inherentModifiers => _ritual.modifiers;
+
   set name(String name) => _updateRitual(_ritual.copyWith(name: name));
 
   String get notes => _casting.ritual.notes;
@@ -27,13 +29,9 @@ class CastingModel with ChangeNotifier {
 
   List<SpellEffect> get inherentSpellEffects => _casting.ritual.effects;
 
-  void addInherentSpellEffect(String pathName) {
-    Path path = Path.fromString(pathName);
-    SpellEffect effect =
-        SpellEffect(path, effect: Effect.sense, level: Level.lesser);
-
-    _updateRitual(_ritual.addSpellEffect(effect));
-  }
+  void addInherentSpellEffect(String pathName) => _updateRitual(
+      _ritual.addSpellEffect(SpellEffect(Path.fromString(pathName),
+          effect: Effect.sense, level: Level.lesser)));
 
   void updateInherentSpellEffectLevel(int index, Level level) {
     var effect = _ritual.effects[index];
@@ -51,6 +49,9 @@ class CastingModel with ChangeNotifier {
     }
   }
 
-  removeInherentSpellEffect(int index) =>
+  void removeInherentSpellEffect(int index) =>
       _updateRitual(_ritual.removeSpellEffect(index));
+
+  void addInherentModifier(String name) =>
+      _updateRitual(_ritual.addModifier(RitualModifier.fromString(name)));
 }

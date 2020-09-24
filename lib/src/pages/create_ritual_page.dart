@@ -5,6 +5,7 @@ import 'package:tuple/tuple.dart';
 import '../models/ritual_model.dart';
 import '../widgets/dynamic_list_header.dart';
 import '../widgets/provider_aware_textfield.dart';
+import '../widgets/ritual_modifier_list.dart';
 import '../widgets/spell_effect_list.dart';
 
 class CreateRitualPage extends StatelessWidget {
@@ -64,7 +65,7 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
         ),
       ),
       SpellEffectList(),
-      DynamicListHeader(title: 'Inherent Modifiers:'),
+      RitualModifierList(),
       IntrinsicHeight(
         child: Row(
           children: [
