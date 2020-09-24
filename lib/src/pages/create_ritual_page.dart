@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import 'package:gurps_rpm_app/src/models/ritual_model.dart';
 import 'package:gurps_rpm_app/src/widgets/ProviderAwareTextField.dart';
+import 'package:gurps_rpm_app/src/widgets/dynamic_list_header.dart';
 import 'package:provider/provider.dart';
 
 class CreateRitualPage extends StatelessWidget {
@@ -29,6 +31,18 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
   final _titleEditingController = TextEditingController();
   final _notesEditingController = TextEditingController();
 
+  List<String> pathOptions = [
+    'Body',
+    'Chance',
+    'Crossroads',
+    'Energy',
+    'Magic',
+    'Matter',
+    'Mind',
+    'Spirit',
+    'Undead',
+  ];
+
   @override
   void dispose() {
     _titleEditingController.dispose();
@@ -46,6 +60,16 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
     Provider.of<CastingModel>(context, listen: false).notes = value;
   }
 
+  Future<void> _addPath(BuildContext context) async {
+    showMaterialSelectionPicker(
+        context: context,
+        title: 'Select Path:',
+        items: pathOptions,
+        selectedItem: 'Body',
+        onChanged: (value) => Provider.of<CastingModel>(context, listen: false)
+            .addInherentSpellEffect(value));
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -60,61 +84,21 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
           autofocus: true,
           style: textTheme.headline5,
           decoration: InputDecoration(
-              labelText: 'Ritual name', border: const OutlineInputBorder()),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 12.0),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Spell Effects:',
-                  style:
-                      textTheme.subtitle1.copyWith(fontStyle: FontStyle.italic),
-                ),
-                Expanded(
-                  child: Divider(
-                    indent: 8.0,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.add_box_rounded,
-                    color: Colors.green,
-                  ),
-                  onPressed: () {},
-                ),
-              ],
-            ),
+            labelText: 'Ritual name',
+            border: const OutlineInputBorder(),
           ),
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 12.0),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Inherent Modifiers:',
-                  style:
-                      textTheme.subtitle1.copyWith(fontStyle: FontStyle.italic),
-                ),
-                Expanded(
-                  child: Divider(
-                    indent: 8.0,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.add_box_rounded,
-                    color: Colors.green,
-                  ),
-                  onPressed: () {},
-                ),
-              ],
-            ),
+          child: DynamicListHeader(
+            title: 'Spell Effects:',
+            onPressed: () => _addPath(context),
           ),
+        ),
+        Column(),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.0),
+          child: DynamicListHeader(title: 'Inherent Modifiers:'),
         ),
         IntrinsicHeight(
           child: Row(
@@ -155,57 +139,11 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 12.0),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Additional Effects:',
-                  style:
-                      textTheme.subtitle1.copyWith(fontStyle: FontStyle.italic),
-                ),
-                Expanded(
-                  child: Divider(
-                    indent: 8.0,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.add_box_rounded,
-                    color: Colors.green,
-                  ),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ),
+          child: DynamicListHeader(title: 'Additional Effects:'),
         ),
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16.0),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Additional Modifiers:',
-                  style:
-                      textTheme.subtitle1.copyWith(fontStyle: FontStyle.italic),
-                ),
-                Expanded(
-                  child: Divider(
-                    indent: 8.0,
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.add_box_rounded,
-                    color: Colors.green,
-                  ),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ),
+          child: DynamicListHeader(title: 'Additional Modifiers:'),
         ),
       ],
     );
