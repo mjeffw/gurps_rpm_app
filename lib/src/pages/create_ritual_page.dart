@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import 'package:gurps_rpm_app/src/models/ritual_model.dart';
-import 'package:gurps_rpm_app/src/widgets/ProviderAwareTextField.dart';
+import 'package:gurps_rpm_app/src/widgets/provider_aware_textfield.dart';
 import 'package:gurps_rpm_app/src/widgets/dynamic_list_header.dart';
+import 'package:gurps_rpm_app/src/widgets/spell_effects_editor.dart';
+import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 class CreateRitualPage extends StatelessWidget {
@@ -89,27 +91,30 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 12.0),
+          padding: EdgeInsets.only(top: 12.0),
           child: DynamicListHeader(
             title: 'Spell Effects:',
             onPressed: () => _addPath(context),
           ),
         ),
-        Column(),
+        SpellEffectList(),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 12.0),
+          padding: EdgeInsets.only(top: 12.0),
           child: DynamicListHeader(title: 'Inherent Modifiers:'),
         ),
-        IntrinsicHeight(
-          child: Row(
-            children: [
-              Text(
-                'Greater Effects: ',
-                style:
-                    textTheme.subtitle1.copyWith(fontStyle: FontStyle.italic),
-              ),
-              Text('0 (×1).', style: TextStyle(fontSize: 16.0))
-            ],
+        Padding(
+          padding: EdgeInsets.only(top: 12.0),
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                Text(
+                  'Greater Effects: ',
+                  style:
+                      textTheme.subtitle1.copyWith(fontStyle: FontStyle.italic),
+                ),
+                Text('0 (×1).', style: TextStyle(fontSize: 16.0))
+              ],
+            ),
           ),
         ),
         Padding(
@@ -142,10 +147,28 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
           child: DynamicListHeader(title: 'Additional Effects:'),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.0),
+          padding: EdgeInsets.symmetric(vertical: 12.0),
           child: DynamicListHeader(title: 'Additional Modifiers:'),
         ),
       ],
+    );
+  }
+}
+
+class SpellEffectList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Selector<CastingModel, List<SpellEffect>>(
+      selector: (_, model) => model.inherentSpellEffects,
+      builder: (context, effects, child) {
+        List<Widget> widgets = [];
+        for (var index = 0; index < effects.length; index++) {
+          widgets.add(SpellEffectEditor(effect: effects[index], index: index));
+        }
+        return Column(
+          children: widgets,
+        );
+      },
     );
   }
 }
