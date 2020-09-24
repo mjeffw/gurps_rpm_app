@@ -12,20 +12,11 @@ class CastingModel with ChangeNotifier {
 
   int get greaterEffects => _ritual.greaterEffects;
 
-  set name(String name) {
-    Ritual updated = _ritual.copyWith(name: name);
-    if (updated != _ritual) {
-      print('update name: $name');
-      _casting = _casting.copyWith(ritual: updated);
-      notifyListeners();
-    }
-  }
+  set name(String name) => _updateRitual(_ritual.copyWith(name: name));
 
   String get notes => _casting.ritual.notes;
 
-  set notes(String notes) {
-    _updateRitual(_ritual.copyWith(notes: notes));
-  }
+  set notes(String notes) => _updateRitual(_ritual.copyWith(notes: notes));
 
   void _updateRitual(Ritual updated) {
     if (updated != _ritual) {
@@ -60,7 +51,6 @@ class CastingModel with ChangeNotifier {
     }
   }
 
-  removeInherentSpellEffect(int index) {
-    _updateRitual(_ritual.removeSpellEffect(index));
-  }
+  removeInherentSpellEffect(int index) =>
+      _updateRitual(_ritual.removeSpellEffect(index));
 }

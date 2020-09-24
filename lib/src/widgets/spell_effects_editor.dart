@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/models/ritual_model.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
+
+import '../models/ritual_model.dart';
 
 class SpellEffectEditor extends StatelessWidget {
   const SpellEffectEditor({

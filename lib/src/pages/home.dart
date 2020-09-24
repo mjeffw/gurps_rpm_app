@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/widgets/thirdparty/adaptive_scaffold.dart';
 
+import '../widgets/thirdparty/adaptive_scaffold.dart';
 import 'create_ritual_page.dart';
 import 'gather_energy_page.dart';
 import 'options_page.dart';
