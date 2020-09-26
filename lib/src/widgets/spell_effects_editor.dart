@@ -4,6 +4,10 @@ import 'package:provider/provider.dart';
 
 import '../models/ritual_model.dart';
 
+const spacer = const Padding(
+  padding: EdgeInsets.only(right: 4.0),
+);
+
 class SpellEffectEditor extends StatelessWidget {
   const SpellEffectEditor({
     Key key,
@@ -56,9 +60,7 @@ class SpellEffectEditor extends StatelessWidget {
                       .updateInherentSpellEffectLevel(index, value),
               value: effect.level,
             ),
-            const Padding(
-              padding: EdgeInsets.only(right: 4.0),
-            ),
+            spacer,
             DropdownButton(
               items: _effectItems(context),
               onChanged: (value) =>
@@ -66,9 +68,7 @@ class SpellEffectEditor extends StatelessWidget {
                       .updateInherentSpellEffectEffect(index, value),
               value: effect.effect,
             ),
-            const Padding(
-              padding: EdgeInsets.only(right: 4.0),
-            ),
+            spacer,
             Text('${effect.path}'),
             Spacer(),
             IconButton(

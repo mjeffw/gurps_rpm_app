@@ -54,4 +54,9 @@ class CastingModel with ChangeNotifier {
 
   void addInherentModifier(String name) =>
       _updateRitual(_ritual.addModifier(RitualModifier.fromString(name)));
+
+  void incrementInherentModifier(int index, int increment) {
+    _updateRitual(_ritual.updateModifier(
+        index, _ritual.modifiers[index].incrementEffect(increment)));
+  }
 }
