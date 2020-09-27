@@ -64,7 +64,6 @@ class _ProviderSelectorTextFieldState<P>
   void initState() {
     super.initState();
     _focusNode.addListener(() {
-      print('has focus? ${_focusNode.hasFocus}');
       if (!_focusNode.hasFocus) {
         onSubmitted(_controller.text);
       }
