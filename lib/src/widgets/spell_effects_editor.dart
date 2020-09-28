@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
-import '../models/ritual_model.dart';
+import '../models/casting_model.dart';
 
 const spacer = const Padding(
   padding: EdgeInsets.only(right: 4.0),
@@ -55,17 +55,17 @@ class SpellEffectEditor extends StatelessWidget {
           children: [
             DropdownButton(
               items: _levelItems(context),
-              onChanged: (value) =>
-                  Provider.of<CastingModel>(context, listen: false)
-                      .updateInherentSpellEffectLevel(index, value),
+              onChanged: (value) => Provider.of<CastingModel>(context,
+                      listen: false)
+                  .updateInherentSpellEffect(index, effect.withLevel(value)),
               value: effect.level,
             ),
             spacer,
             DropdownButton(
               items: _effectItems(context),
-              onChanged: (value) =>
-                  Provider.of<CastingModel>(context, listen: false)
-                      .updateInherentSpellEffectEffect(index, value),
+              onChanged: (value) => Provider.of<CastingModel>(context,
+                      listen: false)
+                  .updateInherentSpellEffect(index, effect.withEffect(value)),
               value: effect.effect,
             ),
             spacer,

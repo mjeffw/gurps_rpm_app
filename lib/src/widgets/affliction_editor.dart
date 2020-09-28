@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead_web/flutter_typeahead.dart';
-import 'package:gurps_rpm_app/src/models/ritual_model.dart';
+import 'package:gurps_rpm_app/src/models/casting_model.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
@@ -32,22 +32,26 @@ class AfflictionWidget extends StatelessWidget {
           Text('(${modifier.effect}, '),
           if (_isMediumScreen(context))
             IconButton(
-              icon: Icon(
-                Icons.arrow_left_rounded,
-                color: Colors.blue,
+              padding: EdgeInsets.all(0.0),
+              icon: RotatedBox(
+                quarterTurns: 2,
+                child: Icon(
+                  Icons.play_arrow,
+                  color: Colors.blue,
+                ),
               ),
-              onPressed: () => Provider.of<CastingModel>(context, listen: false)
-                  .updateInherentModifier(index, modifier.incrementEffect(-1)),
+              onPressed: () =>
+                  updater.update(index, modifier.incrementEffect(-1)),
             ),
-          Text('${modifier.percent}%'),
+          Text('${(modifier.percent >= 0) ? '+' : ''}${modifier.percent}%'),
           if (_isMediumScreen(context))
             IconButton(
               icon: Icon(
-                Icons.arrow_right_rounded,
+                Icons.play_arrow,
                 color: Colors.blue,
               ),
-              onPressed: () => Provider.of<CastingModel>(context, listen: false)
-                  .updateInherentModifier(index, modifier.incrementEffect(1)),
+              onPressed: () =>
+                  updater.update(index, modifier.incrementEffect(1)),
             ),
           Text(')'),
           Spacer(),
@@ -76,17 +80,15 @@ class AfflictionWidget extends StatelessWidget {
 }
 
 class _ModifierUpdaterCommand {
-  _ModifierUpdaterCommand({this.context});
+  const _ModifierUpdaterCommand({this.context});
 
-  BuildContext context;
+  final BuildContext context;
 
   void update(int index, RitualModifier modifier) {
     Provider.of<CastingModel>(context, listen: false)
         .updateInherentModifier(index, modifier);
   }
 }
-
-typedef ModifierUpdater = void Function(int, RitualModifier);
 
 class _Editor extends StatefulWidget {
   _Editor({this.modifier, this.index, this.updater});
@@ -96,11 +98,11 @@ class _Editor extends StatefulWidget {
   final _ModifierUpdaterCommand updater;
 
   @override
-  __EditorState createState() => __EditorState(modifier);
+  _EditorState createState() => _EditorState(modifier);
 }
 
-class __EditorState extends State<_Editor> {
-  __EditorState(this.modifier);
+class _EditorState extends State<_Editor> {
+  _EditorState(this.modifier);
 
   final _formKey = GlobalKey<FormState>();
   TextEditingController _effectController;

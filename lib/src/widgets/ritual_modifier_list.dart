@@ -4,7 +4,7 @@ import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
-import '../models/ritual_model.dart';
+import '../models/casting_model.dart';
 import '../widgets/affliction_editor.dart';
 import 'dynamic_list_header.dart';
 
@@ -88,8 +88,5 @@ class RitualModifierLine extends StatelessWidget {
     );
   }
 
-  Widget buildModifierEditor() {
-    var map = _map[modifier.runtimeType];
-    return map(modifier, index);
-  }
+  Widget buildModifierEditor() => _map[modifier.runtimeType](modifier, index);
 }

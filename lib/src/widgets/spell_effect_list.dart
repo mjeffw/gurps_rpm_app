@@ -3,7 +3,7 @@ import 'package:flutter_material_pickers/flutter_material_pickers.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
-import '../models/ritual_model.dart';
+import '../models/casting_model.dart';
 import 'dynamic_list_header.dart';
 import 'spell_effects_editor.dart';
 

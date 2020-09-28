@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/ritual_model.dart';
+import '../models/casting_model.dart';
 import '../widgets/thirdparty/adaptive_scaffold.dart';
 import 'create_ritual_page.dart';
 import 'gather_energy_page.dart';

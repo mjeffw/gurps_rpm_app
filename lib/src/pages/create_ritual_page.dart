@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
-import '../models/ritual_model.dart';
+import '../models/casting_model.dart';
 import '../widgets/dynamic_list_header.dart';
 import '../widgets/provider_aware_textfield.dart';
 import '../widgets/ritual_modifier_list.dart';

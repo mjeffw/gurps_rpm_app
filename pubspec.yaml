@@ -28,7 +28,7 @@ dependencies:
   flutter_typeahead_web: ^1.0.0+1
   tuple: ^1.0.3
   gurps_rpm_model:
-    version: ^1.5.1
+    version: ^1.5.2
     git:
       url: https://github.com/mjeffw/gurps_rpm_model
 #    path: ../gurps_rpm_model
