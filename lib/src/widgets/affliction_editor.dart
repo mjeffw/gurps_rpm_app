@@ -4,7 +4,6 @@ import 'package:flutter_typeahead_web/flutter_typeahead.dart';
 import 'package:gurps_rpm_app/src/models/ritual_model.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
 
 const rowSpacer = const Padding(padding: EdgeInsets.only(right: 8.0));
 const rowWideSpacer = const Padding(padding: EdgeInsets.only(right: 16.0));
@@ -23,34 +22,36 @@ class AfflictionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _ModifierUpdaterCommand updater = _ModifierUpdaterCommand(context: context);
+
     return Expanded(
       child: Row(
         children: [
           Text('${modifier.name}'),
           rowWideSpacer,
-          Text('Effect: ${modifier.effect}'),
-          rowSpacer,
-          if (!_isMediumScreen(context))
+          Text('(${modifier.effect}, '),
+          if (_isMediumScreen(context))
             IconButton(
               icon: Icon(
                 Icons.arrow_left_rounded,
                 color: Colors.blue,
               ),
               onPressed: () => Provider.of<CastingModel>(context, listen: false)
-                  .incrementInherentModifier(index, -1),
+                  .updateInherentModifier(index, modifier.incrementEffect(-1)),
             ),
           Text('${modifier.percent}%'),
-          if (!_isMediumScreen(context))
+          if (_isMediumScreen(context))
             IconButton(
               icon: Icon(
                 Icons.arrow_right_rounded,
                 color: Colors.blue,
               ),
               onPressed: () => Provider.of<CastingModel>(context, listen: false)
-                  .incrementInherentModifier(index, 1),
+                  .updateInherentModifier(index, modifier.incrementEffect(1)),
             ),
+          Text(')'),
           Spacer(),
-          Text('(${modifier.energyCost})'),
+          Text('[${modifier.energyCost}]'),
           IconButton(
             icon: Icon(
               Icons.edit,
@@ -59,7 +60,12 @@ class AfflictionWidget extends StatelessWidget {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (context) => _Editor(modifier: modifier, index: index),
+                builder: (context) => _Editor(
+                  modifier: modifier,
+                  index: index,
+                  updater: updater,
+                ),
+                barrierDismissible: false,
               );
             },
           ),
@@ -69,11 +75,25 @@ class AfflictionWidget extends StatelessWidget {
   }
 }
 
+class _ModifierUpdaterCommand {
+  _ModifierUpdaterCommand({this.context});
+
+  BuildContext context;
+
+  void update(int index, RitualModifier modifier) {
+    Provider.of<CastingModel>(context, listen: false)
+        .updateInherentModifier(index, modifier);
+  }
+}
+
+typedef ModifierUpdater = void Function(int, RitualModifier);
+
 class _Editor extends StatefulWidget {
-  _Editor({this.modifier, this.index});
+  _Editor({this.modifier, this.index, this.updater});
 
   final Affliction modifier;
   final int index;
+  final _ModifierUpdaterCommand updater;
 
   @override
   __EditorState createState() => __EditorState(modifier);
@@ -86,6 +106,7 @@ class __EditorState extends State<_Editor> {
   TextEditingController _effectController;
   TextEditingController _percentController;
   Affliction modifier;
+
   @override
   void initState() {
     super.initState();
@@ -107,13 +128,15 @@ class __EditorState extends State<_Editor> {
       actions: [
         TextButton(
           child: const Text('CANCEL'),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
         TextButton(
           child: const Text('OK'),
           onPressed: () {
-            // Provider.of<CastingModel>(context, listen: false)
-            //     .updateInherentModifier(modifier, widget.index);
+            widget.updater.update(widget.index, modifier);
+            Navigator.of(context).pop();
           },
         ),
       ],
