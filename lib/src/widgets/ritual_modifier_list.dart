@@ -5,14 +5,14 @@ import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
-import '../widgets/affliction_editor.dart';
+import 'modifier_widgets/affliction_editor.dart';
 import 'dynamic_list_header.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 
 final Map<Type, WidgetBuilder> _map = {
-  AfflictionStun: (modifier, index) => Text('${modifier.name}'),
-  Affliction: (modifier, index) => AfflictionWidget(modifier, index),
+  AfflictionStun: (modifier, index) => AfflictionStunRow(modifier, index),
+  Affliction: (modifier, index) => AfflictionRow(modifier, index),
 };
 
 class RitualModifierList extends StatelessWidget {
@@ -57,8 +57,10 @@ class RitualModifierList extends StatelessWidget {
 class RitualModifierLine extends StatelessWidget {
   const RitualModifierLine({this.modifier, this.index});
 
-  final RitualModifier modifier;
   final int index;
+  final RitualModifier modifier;
+
+  Widget buildModifierEditor() => _map[modifier.runtimeType](modifier, index);
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +89,4 @@ class RitualModifierLine extends StatelessWidget {
       ),
     );
   }
-
-  Widget buildModifierEditor() => _map[modifier.runtimeType](modifier, index);
 }

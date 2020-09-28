@@ -4,13 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-bool _isLargeScreen(BuildContext context) {
-  return MediaQuery.of(context).size.width > 960.0;
-}
-
-bool _isMediumScreen(BuildContext context) {
-  return MediaQuery.of(context).size.width > 640.0;
-}
+import '../utils.dart';
 
 /// See bottomNavigationBarItem or NavigationRailDestination
 class AdaptiveScaffoldDestination {
@@ -53,7 +47,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
   @override
   Widget build(BuildContext context) {
     // Show a Drawer
-    if (_isLargeScreen(context)) {
+    if (isLargeScreen(context)) {
       return Row(
         children: [
           Drawer(
@@ -94,7 +88,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     }
 
     // Show a navigation rail
-    if (_isMediumScreen(context)) {
+    if (isMediumScreen(context)) {
       return Scaffold(
         appBar: AppBar(
           title: widget.title,
