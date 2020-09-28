@@ -46,7 +46,8 @@ abstract class ModifierRow extends StatelessWidget {
         ...buildModifierRowWidgets(context),
         Spacer(),
         Text('[${modifier.energyCost}]'),
-        if (isEditable) EditButton(onPressed: () => buildShowDialog(context)),
+        EditButton(
+            onPressed: isEditable ? () => buildShowDialog(context) : null),
       ]),
     );
   }

@@ -5,14 +5,16 @@ import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
-import 'modifier_widgets/affliction_editor.dart';
 import 'dynamic_list_header.dart';
+import 'modifier_widgets/affliction_editor.dart';
+import 'modifier_widgets/altered_traits_editor.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 
 final Map<Type, WidgetBuilder> _map = {
   AfflictionStun: (modifier, index) => AfflictionStunRow(modifier, index),
   Affliction: (modifier, index) => AfflictionRow(modifier, index),
+  AlteredTraits: (modifier, index) => AlteredTraitsRow(modifier, index),
 };
 
 class RitualModifierList extends StatelessWidget {
@@ -82,7 +84,7 @@ class RitualModifierLine extends StatelessWidget {
                 color: Colors.red,
               ),
               onPressed: () => Provider.of<CastingModel>(context, listen: false)
-                  .removeInherentSpellEffect(index),
+                  .removeInherentModifier(index),
             ),
           ],
         ),
