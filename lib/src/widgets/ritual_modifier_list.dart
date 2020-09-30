@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_material_pickers/flutter_material_pickers.dart';
+import 'package:gurps_rpm_app/src/widgets/delete_button.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
@@ -77,12 +78,7 @@ class RitualModifierLine extends StatelessWidget {
         child: Row(
           children: [
             widget,
-            //Spacer(),
-            IconButton(
-              icon: Icon(
-                Icons.remove_circle_rounded,
-                color: Colors.red,
-              ),
+            DeleteButton(
               onPressed: () => Provider.of<CastingModel>(context, listen: false)
                   .removeInherentModifier(index),
             ),
