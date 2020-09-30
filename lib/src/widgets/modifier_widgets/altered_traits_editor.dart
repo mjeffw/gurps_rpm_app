@@ -218,6 +218,220 @@ class _EditorState extends State<_Editor> {
               ),
             ],
           ),
+          SwitchListTile(
+            value: trait.hasLevels,
+            onChanged: (state) {
+              print("click! $state");
+              setState(() {
+                modifier = modifier.copyWith(
+                  trait: Trait(
+                    baseCost: modifier.trait.baseCost,
+                    costPerLevel: modifier.trait.costPerLevel,
+                    hasLevels: state,
+                    levels: modifier.trait.levels,
+                    name: modifier.trait.name,
+                  ),
+                );
+              });
+            },
+            title: Text('Has Levels'),
+          ),
+          if (trait.hasLevels)
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.fast_rewind,
+                    color: Colors.blue,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      modifier = modifier.copyWith(
+                        trait: Trait(
+                            name: trait.name,
+                            baseCost: trait.baseCost,
+                            costPerLevel: trait.costPerLevel,
+                            levels:
+                                (trait.levels - 5 < 1) ? 0 : trait.levels - 5,
+                            hasLevels: trait.hasLevels),
+                      );
+                      _levelsController.text = trait.levels.toString();
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: RotatedBox(
+                    quarterTurns: 2,
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      modifier = modifier.copyWith(
+                        trait: Trait(
+                          name: trait.name,
+                          baseCost: trait.baseCost,
+                          costPerLevel: trait.costPerLevel,
+                          levels: (trait.levels == 0) ? 0 : trait.levels - 1,
+                          hasLevels: trait.hasLevels,
+                        ),
+                      );
+                      _levelsController.text = trait.levels.toString();
+                    });
+                  },
+                ),
+                Expanded(
+                  child: SizedBox(
+                    width: 80.0,
+                    child: TextFormField(
+                      textAlign: TextAlign.right,
+                      controller: _levelsController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        labelText: 'Base Cost',
+                        border: const OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.play_arrow,
+                    color: Colors.blue,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      modifier = modifier.copyWith(
+                        trait: Trait(
+                          baseCost: trait.baseCost,
+                          costPerLevel: trait.costPerLevel,
+                          levels: trait.levels + 1,
+                          hasLevels: trait.hasLevels,
+                        ),
+                      );
+                      _levelsController.text = trait.levels.toString();
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.fast_forward,
+                    color: Colors.blue,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      modifier = modifier.copyWith(
+                        trait: Trait(
+                          baseCost: trait.baseCost,
+                          costPerLevel: trait.costPerLevel,
+                          levels: trait.levels + 5,
+                          hasLevels: trait.hasLevels,
+                        ),
+                      );
+                      _levelsController.text = trait.levels.toString();
+                    });
+                  },
+                ),
+              ],
+            ),
+          if (trait.hasLevels)
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.fast_rewind,
+                    color: Colors.blue,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      modifier = modifier.copyWith(
+                          trait: Trait(
+                              name: trait.name,
+                              baseCost: trait.baseCost,
+                              costPerLevel: trait.costPerLevel - 5,
+                              levels: trait.levels,
+                              hasLevels: trait.hasLevels));
+                      _costLevelController.text = trait.costPerLevel.toString();
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: RotatedBox(
+                    quarterTurns: 2,
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      modifier = modifier.copyWith(
+                          trait: Trait(
+                              name: trait.name,
+                              baseCost: trait.baseCost,
+                              costPerLevel: trait.costPerLevel - 5,
+                              levels: trait.levels,
+                              hasLevels: trait.hasLevels));
+                      _costLevelController.text = trait.costPerLevel.toString();
+                    });
+                  },
+                ),
+                Expanded(
+                  child: SizedBox(
+                    width: 80.0,
+                    child: TextFormField(
+                      textAlign: TextAlign.right,
+                      controller: _costLevelController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(
+                        labelText: 'Base Cost',
+                        border: const OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.play_arrow,
+                    color: Colors.blue,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      modifier = modifier.copyWith(
+                          trait: Trait(
+                              name: trait.name,
+                              baseCost: trait.baseCost,
+                              costPerLevel: trait.costPerLevel + 1,
+                              levels: trait.levels,
+                              hasLevels: trait.hasLevels));
+                      _costLevelController.text = trait.baseCost.toString();
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.fast_forward,
+                    color: Colors.blue,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      modifier = modifier.copyWith(
+                          trait: Trait(
+                              name: trait.name,
+                              baseCost: trait.baseCost,
+                              costPerLevel: trait.costPerLevel + 5,
+                              levels: trait.levels,
+                              hasLevels: trait.hasLevels));
+                      _costLevelController.text = trait.baseCost.toString();
+                    });
+                  },
+                ),
+              ],
+            ),
         ],
       ),
     );
