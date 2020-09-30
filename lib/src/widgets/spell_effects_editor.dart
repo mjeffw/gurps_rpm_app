@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:gurps_rpm_app/src/widgets/delete_button.dart';
+import 'package:gurps_rpm_app/src/widgets/utils.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
-
-const spacer = const Padding(
-  padding: EdgeInsets.only(right: 4.0),
-);
 
 class SpellEffectEditor extends StatelessWidget {
   const SpellEffectEditor({
@@ -60,7 +58,7 @@ class SpellEffectEditor extends StatelessWidget {
                   .updateInherentSpellEffect(index, effect.withLevel(value)),
               value: effect.level,
             ),
-            spacer,
+            rowSpacer,
             DropdownButton(
               items: _effectItems(context),
               onChanged: (value) => Provider.of<CastingModel>(context,
@@ -68,14 +66,10 @@ class SpellEffectEditor extends StatelessWidget {
                   .updateInherentSpellEffect(index, effect.withEffect(value)),
               value: effect.effect,
             ),
-            spacer,
+            rowSpacer,
             Text('${effect.path}'),
             Spacer(),
-            IconButton(
-              icon: Icon(
-                Icons.remove_circle_rounded,
-                color: Colors.red,
-              ),
+            DeleteButton(
               onPressed: () => Provider.of<CastingModel>(context, listen: false)
                   .removeInherentSpellEffect(index),
             ),
