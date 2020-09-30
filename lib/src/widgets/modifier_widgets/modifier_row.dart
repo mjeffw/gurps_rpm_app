@@ -27,22 +27,25 @@ abstract class ModifierRow extends StatelessWidget {
   /// The edit dialog must return a RitualModifier in its pop() method.
   Widget dialogBuilder(BuildContext context);
 
+  String get label => '${modifier.name},';
+
   void buildShowDialog(BuildContext context) async {
     RitualModifier newModifier = await showDialog<RitualModifier>(
         context: context,
         barrierDismissible: false,
         builder: (context) => dialogBuilder(context));
 
-    Provider.of<CastingModel>(context, listen: false)
-        .updateInherentModifier(index, newModifier);
+    if (newModifier != null)
+      Provider.of<CastingModel>(context, listen: false)
+          .updateInherentModifier(index, newModifier);
   }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Row(children: [
-        Text('${modifier.name}'),
-        rowWideSpacer,
+        Text(label),
+        rowSpacer,
         ...buildModifierRowWidgets(context),
         Spacer(),
         Text('[${modifier.energyCost}]'),

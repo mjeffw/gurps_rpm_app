@@ -20,6 +20,9 @@ class AfflictionStunRow extends ModifierRow {
   }
 
   @override
+  String get label => '${modifier.name}';
+
+  @override
   bool get isEditable => false;
 
   @override
@@ -34,24 +37,21 @@ class AfflictionRow extends ModifierRow {
   Affliction get affliction => super.modifier;
 
   @override
-  bool get isEditable => true;
-
-  @override
   List<Widget> buildModifierRowWidgets(BuildContext context) {
     return [
-      Text('(${affliction.effect}, '),
+      Text('${affliction.effect}, '),
       if (isMediumScreen(context))
         LeftArrowButton(
           onPressed: () => Provider.of<CastingModel>(context, listen: false)
               .updateInherentModifier(index, modifier.incrementEffect(-1)),
         ),
-      Text('${(affliction.percent >= 0) ? '+' : ''}${affliction.percent}%'),
+      Text('(${(affliction.percent >= 0) ? '+' : ''}${affliction.percent}%)'),
       if (isMediumScreen(context))
         RightArrowButton(
           onPressed: () => Provider.of<CastingModel>(context, listen: false)
               .updateInherentModifier(index, modifier.incrementEffect(1)),
         ),
-      Text(')'),
+      Text(''),
     ];
   }
 
