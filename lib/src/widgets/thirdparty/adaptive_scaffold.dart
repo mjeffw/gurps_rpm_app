@@ -95,6 +95,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
           actions: widget.actions,
         ),
         body: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             NavigationRail(
               leading: widget.floatingActionButton,

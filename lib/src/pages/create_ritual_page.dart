@@ -39,12 +39,10 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
   }
 
   void _titleUpdated(String value) async {
-    print('onSubmitted($value)');
     Provider.of<CastingModel>(context, listen: false).name = value;
   }
 
   void _notesUpdated(String value) async {
-    print('onSubmitted($value)');
     Provider.of<CastingModel>(context, listen: false).notes = value;
   }
 
@@ -57,7 +55,6 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
         valueProvider: () =>
             Provider.of<CastingModel>(context, listen: false).name,
         onSubmitted: _titleUpdated,
-        autofocus: true,
         style: textTheme.headline5,
         decoration: InputDecoration(
           labelText: 'Ritual name',
@@ -114,11 +111,10 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: children2
-          .map((e) => Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: e,
-              ))
+          .map((e) =>
+              Padding(padding: const EdgeInsets.only(bottom: 12.0), child: e))
           .toList(),
     );
   }
