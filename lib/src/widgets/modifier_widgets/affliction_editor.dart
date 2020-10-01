@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_typeahead_web/flutter_typeahead.dart';
 import 'package:gurps_rpm_app/src/models/casting_model.dart';
 import 'package:gurps_rpm_app/src/widgets/modifier_widgets/arrow_button.dart';
+import 'package:gurps_rpm_app/src/widgets/modifier_widgets/int_spinner.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
@@ -104,21 +104,20 @@ class _EditorState extends State<_Editor> {
   _EditorState(this.modifier);
 
   TextEditingController _effectController;
-  TextEditingController _percentController;
   Affliction modifier;
+
+  int _percent;
 
   @override
   void initState() {
     super.initState();
     _effectController = TextEditingController(text: modifier.effect);
-    _percentController =
-        TextEditingController(text: modifier.percent.toString());
+    _percent = modifier.percent;
   }
 
   @override
   void dispose() {
     _effectController.dispose();
-    _percentController.dispose();
     super.dispose();
   }
 
@@ -135,9 +134,8 @@ class _EditorState extends State<_Editor> {
         FlatButton(
           child: const Text('OK'),
           onPressed: () {
-            var percent2 = int.parse(_percentController.text);
             var copy = modifier.copyWith(
-                effect: _effectController.text, percent: percent2);
+                effect: _effectController.text, percent: _percent);
 
             Navigator.of(context).pop<RitualModifier>(copy);
           },
@@ -149,7 +147,7 @@ class _EditorState extends State<_Editor> {
           Text('Affliction Editor'),
           Divider(),
           columnSpacer,
-          TypeAheadField(
+          TypeAheadField<MapEntry<String, int>>(
             textFieldConfiguration: TextFieldConfiguration(
               controller: _effectController,
               autofocus: true,
@@ -165,81 +163,22 @@ class _EditorState extends State<_Editor> {
             onSuggestionSelected: (suggestion) {
               setState(() {
                 _effectController.text = suggestion.key;
-                _percentController.text = suggestion.value.toString();
+                _percent = suggestion.value;
               });
             },
           ),
           columnSpacer,
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.fast_rewind,
-                  color: Colors.blue,
-                ),
-                onPressed: () {
-                  setState(() {
-                    modifier = modifier.incrementEffect(-10);
-                    _percentController.text = modifier.percent.toString();
-                  });
-                },
-              ),
-              IconButton(
-                icon: RotatedBox(
-                  quarterTurns: 2,
-                  child: Icon(
-                    Icons.play_arrow,
-                    color: Colors.blue,
-                  ),
-                ),
-                onPressed: () {
-                  setState(() {
-                    modifier = modifier.incrementEffect(-1);
-                    _percentController.text = modifier.percent.toString();
-                  });
-                },
-              ),
-              Expanded(
-                child: SizedBox(
-                  width: 80.0,
-                  child: TextFormField(
-                    textAlign: TextAlign.right,
-                    controller: _percentController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: InputDecoration(
-                      suffixText: '%',
-                      labelText: 'Percent',
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.play_arrow,
-                  color: Colors.blue,
-                ),
-                onPressed: () {
-                  setState(() {
-                    modifier = modifier.incrementEffect(1);
-                    _percentController.text = modifier.percent.toString();
-                  });
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.fast_forward,
-                  color: Colors.blue,
-                ),
-                onPressed: () {
-                  setState(() {
-                    modifier = modifier.incrementEffect(10);
-                    _percentController.text = modifier.percent.toString();
-                  });
-                },
-              ),
-            ],
+          IntSpinner(
+            onChanged: (value) => setState(() => _percent = value),
+            initialValue: _percent,
+            bigStep: 50,
+            smallStep: 5,
+            minValue: 0,
+            textFieldWidth: 90.0,
+            decoration: InputDecoration(
+              suffixText: '%',
+              labelText: 'Percent',
+            ),
           ),
         ],
       ),
@@ -249,7 +188,7 @@ class _EditorState extends State<_Editor> {
   List<MapEntry<String, int>> getSuggestions(String pattern) {
     RegExp regex = RegExp(pattern.toLowerCase());
     return enhancements.entries
-        .where((element) => regex.hasMatch(element.key.toLowerCase()))
+        .where((entry) => regex.hasMatch(entry.key.toLowerCase()))
         .toList();
   }
 }
