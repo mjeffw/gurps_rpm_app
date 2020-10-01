@@ -35,18 +35,20 @@ abstract class ModifierRow extends StatelessWidget {
         barrierDismissible: false,
         builder: (context) => dialogBuilder(context));
 
-    if (newModifier != null)
+    if (newModifier != null) {
       Provider.of<CastingModel>(context, listen: false)
           .updateInherentModifier(index, newModifier);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    var list = buildModifierRowWidgets(context);
     return Expanded(
       child: Row(children: [
         Text(label),
         rowSpacer,
-        ...buildModifierRowWidgets(context),
+        ...list ?? [],
         Spacer(),
         Text('[${modifier.energyCost}]'),
         EditButton(
