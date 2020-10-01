@@ -27,8 +27,9 @@ dependencies:
   flutter_material_pickers: ^1.7.4
   flutter_typeahead_web: ^1.0.0+1
   tuple: ^1.0.3
+  flutter_masked_text: ^0.8.0
   gurps_rpm_model:
-    version: 0.5.8
+    version: 0.6.6
     git:
       url: https://github.com/mjeffw/gurps_rpm_model
 #    path: ../gurps_rpm_model

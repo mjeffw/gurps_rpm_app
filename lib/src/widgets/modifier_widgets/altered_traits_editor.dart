@@ -133,7 +133,7 @@ class _EditorState extends State<_Editor> {
           SwitchListTile(
             value: _hasLevels,
             onChanged: (state) => setState(() {
-              return _hasLevels = state;
+              _hasLevels = state;
             }),
             title: Text('Has Levels'),
           ),

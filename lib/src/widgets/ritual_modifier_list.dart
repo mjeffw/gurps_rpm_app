@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_material_pickers/flutter_material_pickers.dart';
-import 'package:gurps_rpm_app/src/widgets/delete_button.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
+import 'delete_button.dart';
 import 'dynamic_list_header.dart';
 import 'modifier_widgets/affliction_editor.dart';
 import 'modifier_widgets/altered_traits_editor.dart';
+import 'modifier_widgets/area_effect_editor.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 
@@ -16,6 +17,7 @@ final Map<Type, WidgetBuilder> _map = {
   AfflictionStun: (modifier, index) => AfflictionStunRow(modifier, index),
   Affliction: (modifier, index) => AfflictionRow(modifier, index),
   AlteredTraits: (modifier, index) => AlteredTraitsRow(modifier, index),
+  AreaOfEffect: (modifier, index) => AreaOfEffectRow(modifier, index),
 };
 
 class RitualModifierList extends StatelessWidget {

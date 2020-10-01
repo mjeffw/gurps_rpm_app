@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 typedef IntUpdateCallback = void Function(int);
+typedef StepFunction = int Function(int, int);
+
+int step(int x, int y) => x + y;
 
 class IntSpinner extends StatefulWidget {
   const IntSpinner({
@@ -14,11 +17,14 @@ class IntSpinner extends StatefulWidget {
     this.smallStep = 1,
     this.decoration = const InputDecoration(),
     this.textFieldWidth,
-  }) : super(key: key);
+    this.stepFunction = step,
+  })  : assert(stepFunction != null),
+        super(key: key);
 
   final int initialValue;
   final InputDecoration decoration;
   final IntUpdateCallback onChanged;
+  final StepFunction stepFunction;
   final int bigStep;
   final int smallStep;
   final int maxValue;
@@ -67,7 +73,7 @@ class _IntSpinnerState extends State<IntSpinner> {
             color: Colors.blue,
           ),
           onPressed: () => setState(() {
-            _textAsInt = _textAsInt - widget.bigStep;
+            _textAsInt = widget.stepFunction(_textAsInt, -widget.bigStep);
           }),
         ),
         IconButton(
@@ -80,7 +86,7 @@ class _IntSpinnerState extends State<IntSpinner> {
             ),
           ),
           onPressed: () => setState(() {
-            _textAsInt = _textAsInt - widget.smallStep;
+            _textAsInt = widget.stepFunction(_textAsInt, -widget.smallStep);
           }),
         ),
         Expanded(
@@ -104,7 +110,7 @@ class _IntSpinnerState extends State<IntSpinner> {
             color: Colors.blue,
           ),
           onPressed: () => setState(() {
-            _textAsInt = _textAsInt + widget.smallStep;
+            _textAsInt = widget.stepFunction(_textAsInt, widget.smallStep);
           }),
         ),
         IconButton(
@@ -114,7 +120,7 @@ class _IntSpinnerState extends State<IntSpinner> {
             color: Colors.blue,
           ),
           onPressed: () => setState(() {
-            _textAsInt = _textAsInt + widget.bigStep;
+            _textAsInt = widget.stepFunction(_textAsInt, widget.bigStep);
           }),
         ),
       ],
