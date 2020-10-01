@@ -9,6 +9,7 @@ class RightArrowButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
+      visualDensity: VisualDensity.compact,
       onPressed: _onPressed,
       icon: _buildIcon(),
     );
