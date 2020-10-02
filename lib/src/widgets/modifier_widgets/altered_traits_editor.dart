@@ -118,7 +118,6 @@ class _EditorState extends State<_Editor> {
             ),
           ),
           columnSpacer,
-          // ====
           IntSpinner(
             onChanged: (value) => setState(() {
               _baseCost = value;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gurps_rpm_app/src/models/ritual_factory.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
 class CastingModel with ChangeNotifier {
@@ -44,7 +45,7 @@ class CastingModel with ChangeNotifier {
   get inherentModifiers => _ritual.modifiers;
 
   void addInherentModifier(String name) =>
-      _updateRitual(_ritual.addModifier(RitualModifier.fromString(name)));
+      _updateRitual(_ritual.addModifier(modifierFactories[name]()));
 
   void updateInherentModifier(int index, RitualModifier newValue) =>
       _updateRitual(_ritual.updateModifier(index, newValue));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_material_pickers/flutter_material_pickers.dart';
+import 'package:gurps_rpm_app/src/models/ritual_factory.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +11,7 @@ import 'dynamic_list_header.dart';
 import 'modifier_widgets/affliction_editor.dart';
 import 'modifier_widgets/altered_traits_editor.dart';
 import 'modifier_widgets/area_effect_editor.dart';
+import 'modifier_widgets/bestows_editor.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 
@@ -18,6 +20,7 @@ final Map<Type, WidgetBuilder> _map = {
   Affliction: (modifier, index) => AfflictionRow(modifier, index),
   AlteredTraits: (modifier, index) => AlteredTraitsRow(modifier, index),
   AreaOfEffect: (modifier, index) => AreaOfEffectRow(modifier, index),
+  Bestows: (modifier, index) => BestowsRow(modifier, index),
 };
 
 class RitualModifierList extends StatelessWidget {
@@ -29,7 +32,7 @@ class RitualModifierList extends StatelessWidget {
     showMaterialSelectionPicker(
         context: context,
         title: 'Select Modifier:',
-        items: RitualModifier.labels,
+        items: modifierFactories.keys.toList(),
         selectedItem: AfflictionStun.label,
         onChanged: (value) => Provider.of<CastingModel>(context, listen: false)
             .addInherentModifier(value));
