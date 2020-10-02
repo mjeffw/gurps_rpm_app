@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gurps_rpm_app/src/widgets/text_converter.dart';
 
 typedef IntUpdateCallback = void Function(int);
 typedef StepFunction = int Function(int, int);
@@ -18,10 +19,12 @@ class IntSpinner extends StatefulWidget {
     this.decoration = const InputDecoration(),
     this.textFieldWidth,
     this.stepFunction = step,
+    this.textConverter = const IdentityStringToIntConverter(),
   })  : assert(stepFunction != null),
         super(key: key);
 
   final int initialValue;
+  final StringToIntConverter textConverter;
   final InputDecoration decoration;
   final IntUpdateCallback onChanged;
   final StepFunction stepFunction;
@@ -38,7 +41,7 @@ class IntSpinner extends StatefulWidget {
 class _IntSpinnerState extends State<IntSpinner> {
   TextEditingController _controller;
 
-  int get _textAsInt => int.parse(_controller.text);
+  int get _textAsInt => widget.textConverter.asInt(_controller.text);
 
   set _textAsInt(int value) {
     int newValue = (value < widget.minValue)
@@ -46,13 +49,14 @@ class _IntSpinnerState extends State<IntSpinner> {
         : (value > widget.maxValue)
             ? widget.maxValue
             : value;
-    _controller.text = newValue.toString();
+    _controller.text = widget.textConverter.asString(newValue);
   }
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialValue.toString());
+    _controller = TextEditingController(
+        text: widget.textConverter.asString(widget.initialValue));
     _controller.addListener(() => widget.onChanged(_textAsInt));
   }
 
