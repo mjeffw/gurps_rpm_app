@@ -10,7 +10,7 @@ import '../utils.dart';
 import 'modifier_row.dart';
 
 class AfflictionStunRow extends ModifierRow {
-  const AfflictionStunRow(RitualModifier modifier, int index)
+  const AfflictionStunRow({RitualModifier modifier, int index})
       : assert(modifier is AfflictionStun),
         super(index: index, modifier: modifier);
 
@@ -30,7 +30,7 @@ class AfflictionStunRow extends ModifierRow {
 }
 
 class AfflictionRow extends ModifierRow {
-  const AfflictionRow(RitualModifier modifier, int index)
+  const AfflictionRow({RitualModifier modifier, int index})
       : assert(modifier is Affliction),
         super(modifier: modifier, index: index);
 

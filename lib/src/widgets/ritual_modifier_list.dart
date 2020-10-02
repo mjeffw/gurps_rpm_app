@@ -12,15 +12,17 @@ import 'modifier_widgets/affliction_editor.dart';
 import 'modifier_widgets/altered_traits_editor.dart';
 import 'modifier_widgets/area_effect_editor.dart';
 import 'modifier_widgets/bestows_editor.dart';
+import 'modifier_widgets/damage_editor.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 
 final Map<Type, WidgetBuilder> _map = {
-  AfflictionStun: (modifier, index) => AfflictionStunRow(modifier, index),
-  Affliction: (modifier, index) => AfflictionRow(modifier, index),
-  AlteredTraits: (modifier, index) => AlteredTraitsRow(modifier, index),
-  AreaOfEffect: (modifier, index) => AreaOfEffectRow(modifier, index),
-  Bestows: (modifier, index) => BestowsRow(modifier, index),
+  AfflictionStun: (modifier, index) => AfflictionStunRow(modifier: modifier, index: index),
+  Affliction: (modifier, index) => AfflictionRow(modifier: modifier, index: index),
+  AlteredTraits: (modifier, index) => AlteredTraitsRow(modifier: modifier, index: index),
+  AreaOfEffect: (modifier, index) => AreaOfEffectRow(modifier: modifier, index: index),
+  Bestows: (modifier, index) => BestowsRow(modifier: modifier, index: index),
+  Damage: (modifier, index) => DamageRow(modifier: modifier, index: index),
 };
 
 class RitualModifierList extends StatelessWidget {

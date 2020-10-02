@@ -29,11 +29,14 @@ dependencies:
   tuple: ^1.0.3
   flutter_masked_text: ^0.8.0
   gurps_rpm_model:
-    version: 0.8.0
+    version: 0.8.1
     git:
       url: https://github.com/mjeffw/gurps_rpm_model
-#    path: ../gurps_rpm_model
-  
+  gurps_dart:
+    version: 1.4.1
+    git:
+      url: https://github.com/mjeffw/gurps_dart.git
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0

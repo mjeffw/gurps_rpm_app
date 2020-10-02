@@ -9,7 +9,7 @@ import 'int_spinner.dart';
 import 'modifier_row.dart';
 
 class AlteredTraitsRow extends ModifierRow {
-  AlteredTraitsRow(RitualModifier modifier, int index)
+  AlteredTraitsRow({RitualModifier modifier, int index})
       : assert(modifier is AlteredTraits),
         super(modifier: modifier, index: index);
 

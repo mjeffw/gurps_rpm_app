@@ -9,7 +9,7 @@ import 'arrow_button.dart';
 import 'modifier_row.dart';
 
 class AreaOfEffectRow extends ModifierRow {
-  AreaOfEffectRow(RitualModifier modifier, int index)
+  AreaOfEffectRow({RitualModifier modifier, int index})
       : assert(modifier is AreaOfEffect),
         super(modifier: modifier, index: index);
 

@@ -15,7 +15,7 @@ const rangeLabels = <BestowsRange, String>{
 };
 
 class BestowsRow extends ModifierRow {
-  BestowsRow(RitualModifier modifier, int index)
+  BestowsRow({RitualModifier modifier, int index})
       : assert(modifier is Bestows),
         super(modifier: modifier, index: index);
 
@@ -112,23 +112,31 @@ class _EditorState extends State<_Editor> {
                   border: const OutlineInputBorder()),
             ),
             columnSpacer,
-            DropdownButton<BestowsRange>(
-              value: _range,
-              items: [
-                DropdownMenuItem(
-                  child: Text('${rangeLabels[BestowsRange.broad]}'),
-                  value: BestowsRange.broad,
-                ),
-                DropdownMenuItem(
-                  child: Text('${rangeLabels[BestowsRange.moderate]}'),
-                  value: BestowsRange.moderate,
-                ),
-                DropdownMenuItem(
-                  child: Text('${rangeLabels[BestowsRange.narrow]}'),
-                  value: BestowsRange.narrow,
-                ),
-              ],
-              onChanged: (value) => setState(() => _range = value),
+            Container(
+              padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4.0),
+                border: Border.all(color: Colors.grey),
+              ),
+              child: DropdownButton<BestowsRange>(
+                underline: Container(),
+                value: _range,
+                items: [
+                  DropdownMenuItem(
+                    child: Text('${rangeLabels[BestowsRange.broad]}'),
+                    value: BestowsRange.broad,
+                  ),
+                  DropdownMenuItem(
+                    child: Text('${rangeLabels[BestowsRange.moderate]}'),
+                    value: BestowsRange.moderate,
+                  ),
+                  DropdownMenuItem(
+                    child: Text('${rangeLabels[BestowsRange.narrow]}'),
+                    value: BestowsRange.narrow,
+                  ),
+                ],
+                onChanged: (value) => setState(() => _range = value),
+              ),
             ),
             columnSpacer,
             IntSpinner(

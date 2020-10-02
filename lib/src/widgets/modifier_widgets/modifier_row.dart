@@ -7,7 +7,7 @@ import '../utils.dart';
 import 'edit_button.dart';
 
 abstract class ModifierRow extends StatelessWidget {
-  const ModifierRow({this.modifier, this.index});
+  const ModifierRow({@required this.modifier, @required this.index});
 
   final RitualModifier modifier;
   final int index;
