@@ -113,15 +113,12 @@ class _EditorState extends State<_Editor> {
             minValue: 0,
             decoration: InputDecoration(
               labelText: 'Dice',
-              errorText: _validate ? 'Not a GURPS dice expression' : null,
             ),
           )
         ],
       ),
     );
   }
-
-  bool get _validate => true;
 }
 
 class DieRollConverter extends StringToIntConverter {
@@ -129,5 +126,9 @@ class DieRollConverter extends StringToIntConverter {
   String toA(int input) => DieRoll(dice: 1, adds: input).toString();
 
   @override
-  int toB(String input) => DieRoll.denormalize(DieRoll.fromString(input));
+  int toB(String input) {
+    var dieRoll = DieRoll.fromString(input);
+    if (dieRoll == null) throw FormatException('$input');
+    return DieRoll.denormalize(dieRoll);
+  }
 }

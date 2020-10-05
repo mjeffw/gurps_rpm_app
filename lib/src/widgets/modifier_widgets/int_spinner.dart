@@ -7,6 +7,8 @@ typedef StepFunction = int Function(int, int);
 
 int step(int x, int y) => x + y;
 
+List<TextInputFormatter> _formatters = [FilteringTextInputFormatter.digitsOnly];
+
 class IntSpinner extends StatefulWidget {
   const IntSpinner({
     Key key,
@@ -20,6 +22,7 @@ class IntSpinner extends StatefulWidget {
     this.textFieldWidth,
     this.stepFunction = step,
     this.textConverter = const IdentityStringToIntConverter(),
+    this.inputFormatters,
   })  : assert(stepFunction != null),
         super(key: key);
 
@@ -33,6 +36,7 @@ class IntSpinner extends StatefulWidget {
   final int maxValue;
   final int minValue;
   final double textFieldWidth;
+  final List<TextInputFormatter> inputFormatters;
 
   @override
   _IntSpinnerState createState() => _IntSpinnerState();
@@ -41,7 +45,18 @@ class IntSpinner extends StatefulWidget {
 class _IntSpinnerState extends State<IntSpinner> {
   TextEditingController _controller;
 
-  int get _textAsInt => widget.textConverter.asInt(_controller.text);
+  bool _invalidText = false;
+
+  int get _textAsInt {
+    try {
+      var result = widget.textConverter.asInt(_controller.text);
+      _invalidText = false;
+      return result;
+    } on FormatException {
+      _invalidText = true;
+      return 
+    }
+  }
 
   set _textAsInt(int value) {
     int newValue = (value < widget.minValue)
@@ -96,11 +111,11 @@ class _IntSpinnerState extends State<IntSpinner> {
         Expanded(
           child: SizedBox(
             width: widget.textFieldWidth,
-            child: TextFormField(
+            child: TextField(
               textAlign: TextAlign.right,
               controller: _controller,
               keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              //inputFormatters: widget.inputFormatters ?? _formatters,
               decoration: widget.decoration.copyWith(
                 border: const OutlineInputBorder(),
               ),
