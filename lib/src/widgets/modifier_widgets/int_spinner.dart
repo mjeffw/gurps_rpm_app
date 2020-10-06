@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gurps_rpm_app/src/widgets/modifier_widgets/arrow_button.dart';
 import 'package:gurps_rpm_app/src/widgets/text_converter.dart';
 
 typedef IntUpdateCallback = void Function(int);
@@ -45,18 +46,7 @@ class IntSpinner extends StatefulWidget {
 class _IntSpinnerState extends State<IntSpinner> {
   TextEditingController _controller;
 
-  bool _invalidText = false;
-
-  int get _textAsInt {
-    try {
-      var result = widget.textConverter.asInt(_controller.text);
-      _invalidText = false;
-      return result;
-    } on FormatException {
-      _invalidText = true;
-      return 
-    }
-  }
+  int get _textAsInt => widget.textConverter.asInt(_controller.text);
 
   set _textAsInt(int value) {
     int newValue = (value < widget.minValue)
@@ -85,25 +75,12 @@ class _IntSpinnerState extends State<IntSpinner> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        IconButton(
-          visualDensity: VisualDensity.compact,
-          icon: Icon(
-            Icons.fast_rewind,
-            color: Colors.blue,
-          ),
+        DoubleLeftArrowButton(
           onPressed: () => setState(() {
             _textAsInt = widget.stepFunction(_textAsInt, -widget.bigStep);
           }),
         ),
-        IconButton(
-          visualDensity: VisualDensity.compact,
-          icon: RotatedBox(
-            quarterTurns: 2,
-            child: Icon(
-              Icons.play_arrow,
-              color: Colors.blue,
-            ),
-          ),
+        LeftArrowButton(
           onPressed: () => setState(() {
             _textAsInt = widget.stepFunction(_textAsInt, -widget.smallStep);
           }),
@@ -111,38 +88,38 @@ class _IntSpinnerState extends State<IntSpinner> {
         Expanded(
           child: SizedBox(
             width: widget.textFieldWidth,
-            child: TextField(
-              textAlign: TextAlign.right,
-              controller: _controller,
-              keyboardType: TextInputType.number,
-              //inputFormatters: widget.inputFormatters ?? _formatters,
-              decoration: widget.decoration.copyWith(
-                border: const OutlineInputBorder(),
-              ),
-            ),
+            child: _buildTextFormField(),
           ),
         ),
-        IconButton(
-          visualDensity: VisualDensity.compact,
-          icon: Icon(
-            Icons.play_arrow,
-            color: Colors.blue,
-          ),
+        RightArrowButton(
           onPressed: () => setState(() {
             _textAsInt = widget.stepFunction(_textAsInt, widget.smallStep);
           }),
         ),
-        IconButton(
-          visualDensity: VisualDensity.compact,
-          icon: Icon(
-            Icons.fast_forward,
-            color: Colors.blue,
-          ),
+        DoubleRightArrowButton(
           onPressed: () => setState(() {
             _textAsInt = widget.stepFunction(_textAsInt, widget.bigStep);
           }),
         ),
       ],
     );
+  }
+
+  TextFormField _buildTextFormField() {
+    return TextFormField(
+      textAlign: TextAlign.right,
+      controller: _controller,
+      keyboardType: _keyboardType(),
+      inputFormatters: widget.inputFormatters ?? _formatters,
+      decoration: widget.decoration.copyWith(
+        border: const OutlineInputBorder(),
+      ),
+    );
+  }
+
+  TextInputType _keyboardType() {
+    return widget.minValue < 0
+        ? TextInputType.numberWithOptions(signed: true)
+        : TextInputType.number;
   }
 }

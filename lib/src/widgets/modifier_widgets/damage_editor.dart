@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_dart/gurps_dart.dart';
 import 'package:gurps_dice/gurps_dice.dart';
+import 'package:gurps_rpm_app/src/widgets/modifier_widgets/dice_spinner.dart';
 import 'package:gurps_rpm_app/src/widgets/text_converter.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,6 @@ import 'package:provider/provider.dart';
 import '../../models/casting_model.dart';
 import '../utils.dart';
 import 'arrow_button.dart';
-import 'int_spinner.dart';
 import 'modifier_row.dart';
 
 class DamageRow extends ModifierRow {
@@ -104,16 +104,10 @@ class _EditorState extends State<_Editor> {
           Text('Damage Editor'),
           Divider(),
           columnSpacer,
-          IntSpinner(
-            onChanged: (value) => setState(() => _dice = _dice + value),
-            initialValue: DieRoll.denormalize(_dice),
-            textConverter: DieRollConverter(),
+          DiceSpinner(
+            onChanged: (value) => setState(() => _dice = value),
+            initialValue: _dice,
             textFieldWidth: 90.0,
-            bigStep: 4,
-            minValue: 0,
-            decoration: InputDecoration(
-              labelText: 'Dice',
-            ),
           )
         ],
       ),
