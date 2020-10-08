@@ -4,11 +4,11 @@ import 'package:gurps_dice/gurps_dice.dart';
 
 import 'arrow_button.dart';
 
+/// Defines a callback executed with the current valid DieRoll value each time
+/// it is updated by this widget.
 typedef DieRollUpdateCallback = void Function(DieRoll);
-typedef StepFunction = int Function(int, int);
 
-int step(int x, int y) => x + y;
-
+/// A regular expression that matches GURPS dice syntax.
 RegExp regex = RegExp(r'^(?<dice>\d+)d(?<adds>[+|-]\d+)?$');
 
 class DiceSpinner extends StatefulWidget {
@@ -45,7 +45,7 @@ class _DiceSpinnerState extends State<DiceSpinner> {
   /// convert the DieRoll into text, enforcing the minimum value of 1d.
   set _textAsDice(DieRoll value) {
     int denormalizedAdds = DieRoll.denormalize(value);
-    DieRoll newValue = (denormalizedAdds < 0) ? DieRoll() : value;
+    DieRoll newValue = (denormalizedAdds <= 0) ? DieRoll(dice: 1) : value;
     _controller.text = newValue.toString();
   }
 

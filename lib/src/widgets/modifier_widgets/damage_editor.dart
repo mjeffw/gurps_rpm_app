@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_dart/gurps_dart.dart';
 import 'package:gurps_dice/gurps_dice.dart';
+import 'package:gurps_rpm_app/src/widgets/dynamic_list_header.dart';
 import 'package:gurps_rpm_app/src/widgets/modifier_widgets/dice_spinner.dart';
-import 'package:gurps_rpm_app/src/widgets/text_converter.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
@@ -108,21 +108,57 @@ class _EditorState extends State<_Editor> {
             onChanged: (value) => setState(() => _dice = value),
             initialValue: _dice,
             textFieldWidth: 90.0,
-          )
+          ),
+          columnSpacer,
+          Container(
+            padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4.0),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: DropdownButton<DamageType>(
+              underline: Container(),
+              value: _type,
+              items: _damageTypeItems(),
+              onChanged: (value) => setState(() => _type = value),
+            ),
+          ),
+          columnSpacer,
+          SwitchListTile(
+            value: _direct,
+            onChanged: (state) => setState(() => _direct = state),
+            title: Text(_direct ? 'Internal (Direct)' : 'External (Indirect)'),
+          ),
+          if (!_direct) ...<Widget>[
+            columnSpacer,
+            CheckboxListTile(
+              value: _explosive,
+              onChanged: (state) => setState(() => _explosive = state),
+              title: Text('Explosive'),
+            ),
+          ],
+          columnSpacer,
+          DynamicListHeader(
+            title: 'Enhancements/Limitations',
+            onPressed: () {},
+          ),
+          SingleChildScrollView(
+            child: Column(
+              children: _enhancementList(),
+            ),
+          ),
         ],
       ),
     );
   }
-}
 
-class DieRollConverter extends StringToIntConverter {
-  @override
-  String toA(int input) => DieRoll(dice: 1, adds: input).toString();
-
-  @override
-  int toB(String input) {
-    var dieRoll = DieRoll.fromString(input);
-    if (dieRoll == null) throw FormatException('$input');
-    return DieRoll.denormalize(dieRoll);
+  List<Widget> _enhancementList() {
+    return [];
   }
+
+  List<DropdownMenuItem<DamageType>> _damageTypeItems() =>
+      DamageType.map.entries
+          .map((entry) => DropdownMenuItem<DamageType>(
+              child: Text(entry.key), value: entry.value))
+          .toList();
 }
