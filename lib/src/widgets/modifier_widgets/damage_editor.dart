@@ -102,66 +102,77 @@ class _EditorState extends State<_Editor> {
               Navigator.of(context).pop<RitualModifier>(_createModifier()),
         ),
       ],
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('Damage Editor'),
-          Divider(),
-          columnSpacer,
-          DiceSpinner(
-            onChanged: (value) => setState(() => _dice = value),
-            initialValue: _dice,
-            textFieldWidth: 90.0,
-          ),
-          columnSpacer,
-          Container(
-            padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.0),
-              border: Border.all(color: Colors.grey),
-            ),
-            child: DropdownButton<DamageType>(
-              underline: Container(),
-              value: _type,
-              items: _damageTypeItems(),
-              onChanged: (value) => setState(() => _type = value),
-            ),
-          ),
-          columnSpacer,
-          SwitchListTile(
-            value: _direct,
-            onChanged: (state) => setState(() => _direct = state),
-            title: Text(_direct ? 'Internal (Direct)' : 'External (Indirect)'),
-          ),
-          if (!_direct) ...<Widget>[
+      content: ConstrainedBox(
+        constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height - 100.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Damage Editor'),
+            Divider(),
             columnSpacer,
-            CheckboxListTile(
-              value: _explosive,
-              onChanged: (state) => setState(() => _explosive = state),
-              title: Text('Explosive'),
+            DiceSpinner(
+              onChanged: (value) => setState(() => _dice = value),
+              initialValue: _dice,
+              textFieldWidth: 90.0,
+            ),
+            columnSpacer,
+            Container(
+              padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4.0),
+                border: Border.all(color: Colors.grey),
+              ),
+              child: DropdownButton<DamageType>(
+                underline: Container(),
+                value: _type,
+                items: _damageTypeItems(),
+                onChanged: (value) => setState(() => _type = value),
+              ),
+            ),
+            columnSpacer,
+            SwitchListTile(
+              value: _direct,
+              onChanged: (state) => setState(() => _direct = state),
+              title:
+                  Text(_direct ? 'Internal (Direct)' : 'External (Indirect)'),
+            ),
+            if (!_direct) ...<Widget>[
+              columnSpacer,
+              CheckboxListTile(
+                value: _explosive,
+                onChanged: (state) => setState(() => _explosive = state),
+                title: Text('Explosive'),
+              ),
+            ],
+            columnSpacer,
+            DynamicListHeader(
+              title: 'Enhancements/Limitations',
+              onPressed: () => setState(() =>
+                  _modifiers.add(TraitModifier(name: 'Undefined', percent: 0))),
+            ),
+            SingleChildScrollView(
+              child: ListBody(
+                children: _enhancementList(),
+              ),
             ),
           ],
-          columnSpacer,
-          DynamicListHeader(
-            title: 'Enhancements/Limitations',
-            onPressed: () => setState(() =>
-                _modifiers.add(TraitModifier(name: 'Undefined', percent: 0))),
-          ),
-          SingleChildScrollView(
-            child: ListBody(
-              children: _enhancementList(),
-            ),
-          ),
-        ],
+        ),
       ),
     );
+  }
+
+  Widget _itemBuilder(BuildContext context, int index) {
+    return _EnhancerEditor(_modifiers[index], index: index,
+        onChanged: (index, enhancer) {
+      _modifiers[index] = enhancer;
+    });
   }
 
   List<Widget> _enhancementList() {
     var list = <Widget>[];
     _modifiers.forEach(
       (element) {
-        if (_modifiers.length > 0) list.add(columnSpacer);
         list.add(_EnhancerEditor(element, index: _modifiers.indexOf(element),
             onChanged: (index, enhancer) {
           _modifiers[index] = enhancer;
@@ -234,7 +245,8 @@ class __EnhancerEditorState extends State<_EnhancerEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
       child: Row(
         children: [
           Expanded(
