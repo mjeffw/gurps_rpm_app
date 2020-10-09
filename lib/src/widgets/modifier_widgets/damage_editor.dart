@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_typeahead_web/flutter_typeahead.dart';
 import 'package:gurps_dart/gurps_dart.dart';
 import 'package:gurps_dice/gurps_dice.dart';
+import 'package:gurps_rpm_app/src/widgets/delete_button.dart';
 import 'package:gurps_rpm_app/src/widgets/dynamic_list_header.dart';
 import 'package:gurps_rpm_app/src/widgets/modifier_widgets/dice_spinner.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
@@ -39,9 +40,12 @@ class DamageRow extends ModifierRow {
               .updateInherentModifier(index, damage.incrementEffect(1)),
         ),
       rowSmallSpacer,
-      Text(
-        isMediumScreen(context) ? '(enhancements...)' : '(…)',
-        overflow: TextOverflow.ellipsis,
+      Flexible(
+        fit: FlexFit.tight,
+        child: Text(
+          _getEnhancerText(),
+          overflow: TextOverflow.ellipsis,
+        ),
       )
     ];
   }
@@ -49,6 +53,16 @@ class DamageRow extends ModifierRow {
   @override
   Widget dialogBuilder(BuildContext context) =>
       _Editor(modifier: modifier, index: index);
+
+  String _getEnhancerText() {
+    return (damage.modifiers.isEmpty)
+        ? ''
+        : '(' +
+            damage.modifiers
+                .map((it) => it.summaryText)
+                .reduce((a, b) => a + ', ' + b) +
+            ')';
+  }
 }
 
 class _Editor extends StatefulWidget {
@@ -163,20 +177,30 @@ class _EditorState extends State<_Editor> {
   }
 
   Widget _itemBuilder(BuildContext context, int index) {
-    return _EnhancerEditor(_modifiers[index], index: index,
-        onChanged: (index, enhancer) {
-      _modifiers[index] = enhancer;
-    });
+    return _EnhancerEditor(
+      _modifiers[index],
+      index: index,
+      onChanged: (index, enhancer) =>
+          setState(() => _modifiers[index] = enhancer),
+      onDeleted: (index, enhancer) =>
+          setState(() => _modifiers.removeAt(index)),
+    );
   }
 
   List<Widget> _enhancementList() {
     var list = <Widget>[];
     _modifiers.forEach(
       (element) {
-        list.add(_EnhancerEditor(element, index: _modifiers.indexOf(element),
-            onChanged: (index, enhancer) {
-          _modifiers[index] = enhancer;
-        }));
+        list.add(
+          _EnhancerEditor(
+            element,
+            index: _modifiers.indexOf(element),
+            onChanged: (index, enhancer) =>
+                setState(() => _modifiers[index] = enhancer),
+            onDeleted: (index, enhancer) =>
+                setState(() => _modifiers.removeAt(index)),
+          ),
+        );
       },
     );
     return list;
@@ -192,10 +216,14 @@ class _EditorState extends State<_Editor> {
 typedef TraitModifierCallback = void Function(int, TraitModifier);
 
 class _EnhancerEditor extends StatefulWidget {
-  _EnhancerEditor(this.enhancer, {this.onChanged, this.index});
+  _EnhancerEditor(this.enhancer,
+      {@required this.onChanged,
+      @required this.onDeleted,
+      @required this.index});
 
   final TraitModifier enhancer;
   final TraitModifierCallback onChanged;
+  final TraitModifierCallback onDeleted;
   final int index;
 
   @override
@@ -250,28 +278,11 @@ class __EnhancerEditorState extends State<_EnhancerEditor> {
       child: Row(
         children: [
           Expanded(
-            child: TextField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Enhancement/Limitation',
-                border: const OutlineInputBorder(),
-              ),
-            ),
-          ),
-          rowSmallSpacer,
-          SizedBox(
-            width: 80.0,
             child: TypeAheadField<MapEntry<String, int>>(
               textFieldConfiguration: TextFieldConfiguration(
-                controller: _percentController,
-                textAlign: TextAlign.end,
-                keyboardType: TextInputType.numberWithOptions(signed: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))
-                ],
+                controller: _nameController,
                 decoration: const InputDecoration(
-                  suffixText: '%',
-                  labelText: 'Percent',
+                  labelText: 'Enhancement/Limitation',
                   border: const OutlineInputBorder(),
                 ),
               ),
@@ -288,6 +299,26 @@ class __EnhancerEditorState extends State<_EnhancerEditor> {
               },
             ),
           ),
+          rowSmallSpacer,
+          SizedBox(
+            width: 80.0,
+            child: TextField(
+              controller: _percentController,
+              textAlign: TextAlign.end,
+              keyboardType: TextInputType.numberWithOptions(signed: true),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))
+              ],
+              decoration: const InputDecoration(
+                suffixText: '%',
+                labelText: 'Percent',
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ),
+          DeleteButton(
+            onPressed: () => widget.onDeleted(widget.index, widget.enhancer),
+          )
         ],
       ),
     );
@@ -301,4 +332,8 @@ class __EnhancerEditorState extends State<_EnhancerEditor> {
   }
 }
 
-const enhancements = <String, int>{};
+const enhancements = <String, int>{
+  'Double Knockback': 20,
+  'Jet': 0,
+  'No Wounding': -50,
+};
