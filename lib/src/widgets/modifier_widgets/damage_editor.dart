@@ -1,4 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_typeahead_web/flutter_typeahead.dart';
 import 'package:gurps_dart/gurps_dart.dart';
 import 'package:gurps_dice/gurps_dice.dart';
 import 'package:gurps_rpm_app/src/widgets/dynamic_list_header.dart';
@@ -62,7 +66,7 @@ class _EditorState extends State<_Editor> {
   bool _direct;
   bool _explosive;
   DamageType _type;
-  List<TraitModifier> _modifiers;
+  List<TraitModifier> _modifiers = [];
 
   @override
   void initState() {
@@ -72,7 +76,7 @@ class _EditorState extends State<_Editor> {
     _direct = widget.modifier.direct;
     _explosive = widget.modifier.explosive;
     _type = widget.modifier.type;
-    _modifiers = widget.modifier.modifiers;
+    _modifiers.addAll(widget.modifier.modifiers);
   }
 
   Damage _createModifier() {
@@ -140,10 +144,11 @@ class _EditorState extends State<_Editor> {
           columnSpacer,
           DynamicListHeader(
             title: 'Enhancements/Limitations',
-            onPressed: () {},
+            onPressed: () => setState(() =>
+                _modifiers.add(TraitModifier(name: 'Undefined', percent: 0))),
           ),
           SingleChildScrollView(
-            child: Column(
+            child: ListBody(
               children: _enhancementList(),
             ),
           ),
@@ -153,7 +158,17 @@ class _EditorState extends State<_Editor> {
   }
 
   List<Widget> _enhancementList() {
-    return [];
+    var list = <Widget>[];
+    _modifiers.forEach(
+      (element) {
+        if (_modifiers.length > 0) list.add(columnSpacer);
+        list.add(_EnhancerEditor(element, index: _modifiers.indexOf(element),
+            onChanged: (index, enhancer) {
+          _modifiers[index] = enhancer;
+        }));
+      },
+    );
+    return list;
   }
 
   List<DropdownMenuItem<DamageType>> _damageTypeItems() =>
@@ -162,3 +177,116 @@ class _EditorState extends State<_Editor> {
               child: Text(entry.key), value: entry.value))
           .toList();
 }
+
+typedef TraitModifierCallback = void Function(int, TraitModifier);
+
+class _EnhancerEditor extends StatefulWidget {
+  _EnhancerEditor(this.enhancer, {this.onChanged, this.index});
+
+  final TraitModifier enhancer;
+  final TraitModifierCallback onChanged;
+  final int index;
+
+  @override
+  __EnhancerEditorState createState() => __EnhancerEditorState();
+}
+
+class __EnhancerEditorState extends State<_EnhancerEditor> {
+  TextEditingController _nameController;
+  TextEditingController _percentController;
+  bool _validInput = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _nameController = TextEditingController(text: widget.enhancer.name);
+    _nameController.addListener(_onChanged);
+
+    _percentController =
+        TextEditingController(text: widget.enhancer.percent.toString());
+    _percentController.addListener(_onChanged);
+  }
+
+  @override
+  void dispose() {
+    _nameController.removeListener(_onChanged);
+    _nameController.dispose();
+
+    _percentController.removeListener(_onChanged);
+    _percentController.dispose();
+
+    super.dispose();
+  }
+
+  void _onChanged() {
+    String text = _percentController.text.trim();
+    setState(() {
+      int value = int.tryParse(text);
+      _validInput = (value != null);
+
+      if (_validInput) {
+        widget.onChanged(widget.index,
+            TraitModifier(name: _nameController.text, percent: value));
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: 'Enhancement/Limitation',
+                border: const OutlineInputBorder(),
+              ),
+            ),
+          ),
+          rowSmallSpacer,
+          SizedBox(
+            width: 80.0,
+            child: TypeAheadField<MapEntry<String, int>>(
+              textFieldConfiguration: TextFieldConfiguration(
+                controller: _percentController,
+                textAlign: TextAlign.end,
+                keyboardType: TextInputType.numberWithOptions(signed: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))
+                ],
+                decoration: const InputDecoration(
+                  suffixText: '%',
+                  labelText: 'Percent',
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              hideOnEmpty: true,
+              suggestionsCallback: getSuggestions,
+              itemBuilder: (context, suggestion) => ListTile(
+                title: Text('${suggestion.key} (${suggestion.value}%)'),
+              ),
+              onSuggestionSelected: (suggestion) {
+                setState(() {
+                  _nameController.text = suggestion.key;
+                  _percentController.text = suggestion.value.toString();
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<MapEntry<String, int>> getSuggestions(String pattern) {
+    RegExp regex = RegExp(pattern.toLowerCase());
+    return enhancements.entries
+        .where((entry) => regex.hasMatch(entry.key.toLowerCase()))
+        .toList();
+  }
+}
+
+const enhancements = <String, int>{};
