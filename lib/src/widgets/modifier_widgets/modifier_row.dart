@@ -48,8 +48,10 @@ abstract class ModifierRow extends StatelessWidget {
       child: Row(children: [
         Text(label),
         rowSpacer,
-        ...list ?? [],
-        Spacer(),
+        Expanded(
+          child: Row(children: list ?? []),
+        ),
+        rowSpacer,
         Text('[${modifier.energyCost}]'),
         EditButton(
             onPressed: isEditable ? () => buildShowDialog(context) : null),

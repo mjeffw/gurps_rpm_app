@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_typeahead_web/flutter_typeahead.dart';
@@ -118,7 +116,10 @@ class _EditorState extends State<_Editor> {
       ],
       content: ConstrainedBox(
         constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height - 100.0),
+            maxHeight: MediaQuery.of(context).size.height - 100.0,
+            maxWidth: MediaQuery.of(context).size.width - 40.0,
+            minWidth: 350.0,
+            minHeight: 400.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -165,9 +166,20 @@ class _EditorState extends State<_Editor> {
               onPressed: () => setState(() =>
                   _modifiers.add(TraitModifier(name: 'Undefined', percent: 0))),
             ),
-            SingleChildScrollView(
-              child: ListBody(
-                children: _enhancementList(),
+            Flexible(
+              fit: FlexFit.loose,
+              child:
+                  // ListView.builder(
+                  //   shrinkWrap: true,
+                  //   padding: EdgeInsets.all(0.0),
+                  //   scrollDirection: Axis.vertical,
+                  //   itemCount: _modifiers.length,
+                  //   itemBuilder: _itemBuilder,
+                  // ),
+                  SingleChildScrollView(
+                child: ListBody(
+                  children: _enhancementList(),
+                ),
               ),
             ),
           ],
@@ -176,6 +188,7 @@ class _EditorState extends State<_Editor> {
     );
   }
 
+  // ignore: unused_element
   Widget _itemBuilder(BuildContext context, int index) {
     return _EnhancerEditor(
       _modifiers[index],
@@ -187,6 +200,7 @@ class _EditorState extends State<_Editor> {
     );
   }
 
+  // ignore: unused_element
   List<Widget> _enhancementList() {
     var list = <Widget>[];
     _modifiers.forEach(
@@ -273,53 +287,56 @@ class __EnhancerEditorState extends State<_EnhancerEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TypeAheadField<MapEntry<String, int>>(
-              textFieldConfiguration: TextFieldConfiguration(
-                controller: _nameController,
+    return IntrinsicHeight(
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: TypeAheadField<MapEntry<String, int>>(
+                textFieldConfiguration: TextFieldConfiguration(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Enhancement/Limitation',
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                hideOnEmpty: true,
+                suggestionsCallback: getSuggestions,
+                itemBuilder: (context, suggestion) => ListTile(
+                  title: Text('${suggestion.key} (${suggestion.value}%)'),
+                ),
+                onSuggestionSelected: (suggestion) {
+                  setState(() {
+                    _nameController.text = suggestion.key;
+                    _percentController.text = suggestion.value.toString();
+                  });
+                },
+              ),
+            ),
+            rowSpacer,
+            SizedBox(
+              width: 80.0,
+              child: TextField(
+                controller: _percentController,
+                textAlign: TextAlign.end,
+                keyboardType: TextInputType.numberWithOptions(signed: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))
+                ],
                 decoration: const InputDecoration(
-                  labelText: 'Enhancement/Limitation',
+                  suffixText: '%',
+                  labelText: 'Percent',
                   border: const OutlineInputBorder(),
                 ),
               ),
-              hideOnEmpty: true,
-              suggestionsCallback: getSuggestions,
-              itemBuilder: (context, suggestion) => ListTile(
-                title: Text('${suggestion.key} (${suggestion.value}%)'),
-              ),
-              onSuggestionSelected: (suggestion) {
-                setState(() {
-                  _nameController.text = suggestion.key;
-                  _percentController.text = suggestion.value.toString();
-                });
-              },
             ),
-          ),
-          rowSmallSpacer,
-          SizedBox(
-            width: 80.0,
-            child: TextField(
-              controller: _percentController,
-              textAlign: TextAlign.end,
-              keyboardType: TextInputType.numberWithOptions(signed: true),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))
-              ],
-              decoration: const InputDecoration(
-                suffixText: '%',
-                labelText: 'Percent',
-                border: const OutlineInputBorder(),
-              ),
-            ),
-          ),
-          DeleteButton(
-            onPressed: () => widget.onDeleted(widget.index, widget.enhancer),
-          )
-        ],
+            DeleteButton(
+              onPressed: () => widget.onDeleted(widget.index, widget.enhancer),
+            )
+          ],
+        ),
       ),
     );
   }
