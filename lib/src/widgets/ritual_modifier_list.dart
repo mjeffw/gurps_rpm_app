@@ -13,16 +13,24 @@ import 'modifier_widgets/altered_traits_editor.dart';
 import 'modifier_widgets/area_effect_editor.dart';
 import 'modifier_widgets/bestows_editor.dart';
 import 'modifier_widgets/damage_editor.dart';
+import 'modifier_widgets/extra_energy_row.dart';
+import 'modifier_widgets/duration_row.dart';
+import 'modifier_widgets/healing_row.dart';
+import 'modifier_widgets/meta_magic_row.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 
 final Map<Type, WidgetBuilder> _map = {
-  AfflictionStun: (modifier, index) => AfflictionStunRow(modifier: modifier, index: index),
-  Affliction: (modifier, index) => AfflictionRow(modifier: modifier, index: index),
-  AlteredTraits: (modifier, index) => AlteredTraitsRow(modifier: modifier, index: index),
-  AreaOfEffect: (modifier, index) => AreaOfEffectRow(modifier: modifier, index: index),
-  Bestows: (modifier, index) => BestowsRow(modifier: modifier, index: index),
-  Damage: (modifier, index) => DamageRow(modifier: modifier, index: index),
+  AfflictionStun: (mod, i) => AfflictionStunRow(modifier: mod, index: i),
+  Affliction: (mod, i) => AfflictionRow(modifier: mod, index: i),
+  AlteredTraits: (mod, i) => AlteredTraitsRow(modifier: mod, index: i),
+  AreaOfEffect: (mod, i) => AreaOfEffectRow(modifier: mod, index: i),
+  Bestows: (mod, i) => BestowsRow(modifier: mod, index: i),
+  Damage: (mod, i) => DamageRow(modifier: mod, index: i),
+  DurationModifier: (mod, i) => DurationRow(modifier: mod, index: i),
+  ExtraEnergy: (mod, i) => ExtraEnergyRow(modifier: mod, index: i),
+  Healing: (mod, i) => HealingRow(modifier: mod, index: i),
+  MetaMagic: (mod, i) => MetaMagicRow(modifier: mod, index: i),
 };
 
 class RitualModifierList extends StatelessWidget {

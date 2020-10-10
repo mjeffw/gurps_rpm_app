@@ -8,5 +8,9 @@ Map<String, ModifierFactory> modifierFactories = {
   AlteredTraits.label: () => AlteredTraits(Trait(name: 'Undefined')),
   AreaOfEffect.label: () => AreaOfEffect(),
   Bestows.label: () => Bestows('Undefined'),
-  'Damage': () => Damage(),
+  Damage.label: () => Damage(),
+  DurationModifier.label: () => DurationModifier(),
+  ExtraEnergy.label: () => ExtraEnergy(),
+  Healing.label: () => Healing(),
+  MetaMagic.label: () => MetaMagic(),
 };
