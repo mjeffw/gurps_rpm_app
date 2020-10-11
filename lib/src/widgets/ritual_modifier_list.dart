@@ -5,6 +5,7 @@ import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
+import '../models/delete_button_visible.dart';
 import '../models/ritual_factory.dart';
 import 'delete_button.dart';
 import 'dynamic_list_header.dart';
@@ -23,6 +24,7 @@ import 'modifier_widgets/range_info_row.dart';
 import 'modifier_widgets/range_row.dart';
 import 'modifier_widgets/speed_row.dart';
 import 'modifier_widgets/subject_weight_row.dart';
+import 'utils.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 
@@ -63,7 +65,7 @@ class RitualModifierList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (BuildContext context) => DeleteButtonVisible(),
+      create: (_) => DeleteButtonVisible(),
       child: Column(
         children: [
           Consumer<DeleteButtonVisible>(
@@ -118,7 +120,7 @@ class RitualModifierLine extends StatelessWidget {
             child: Row(
               children: [
                 widget,
-                if (deleteVisible.value)
+                if (deleteVisible.value && isMediumScreen(context))
                   DeleteButton(
                     onPressed: () => _deleteAction(context),
                   ),
@@ -137,18 +139,5 @@ class RitualModifierLine extends StatelessWidget {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text('Modifier ${modifier.name} deleted'),
     ));
-  }
-}
-
-class DeleteButtonVisible extends ChangeNotifier {
-  bool _value = false;
-
-  bool get value => _value;
-
-  set value(bool newvalue) {
-    if (_value != newvalue) {
-      _value = newvalue;
-      notifyListeners();
-    }
   }
 }
