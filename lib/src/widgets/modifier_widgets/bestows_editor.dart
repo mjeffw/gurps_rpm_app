@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 
 import '../../models/casting_model.dart';
 import '../utils.dart';
-import 'arrow_button.dart';
-import 'int_spinner.dart';
+import '../arrow_button.dart';
+import '../int_spinner.dart';
 import 'modifier_row.dart';
 
 const rangeLabels = <BestowsRange, String>{

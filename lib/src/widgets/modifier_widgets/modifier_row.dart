@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/casting_model.dart';
 import '../utils.dart';
-import 'edit_button.dart';
+import '../edit_button.dart';
 
 abstract class ModifierRow extends StatelessWidget {
   const ModifierRow({@required this.modifier, @required this.index});
