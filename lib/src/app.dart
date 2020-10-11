@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/pages/home.dart';
 import 'package:provider/provider.dart';
+
+import 'pages/home.dart';
 
 /// The global state the app.
 class AppState {}

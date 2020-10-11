@@ -3,15 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_typeahead_web/flutter_typeahead.dart';
 import 'package:gurps_dart/gurps_dart.dart';
 import 'package:gurps_dice/gurps_dice.dart';
-import 'package:gurps_rpm_app/src/widgets/delete_button.dart';
-import 'package:gurps_rpm_app/src/widgets/dynamic_list_header.dart';
-import 'package:gurps_rpm_app/src/widgets/modifier_widgets/dice_spinner.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/casting_model.dart';
+import '../arrow_button.dart';
+import '../delete_button.dart';
+import '../dice_spinner.dart';
+import '../dynamic_list_header.dart';
 import '../utils.dart';
-import 'arrow_button.dart';
 import 'modifier_row.dart';
 
 class DamageRow extends ModifierRow {
@@ -161,7 +161,7 @@ class _EditorState extends State<_Editor> {
             columnSpacer,
             DynamicListHeader(
               title: 'Enhancements/Limitations',
-              onPressed: () => setState(() =>
+              onAddPressed: () => setState(() =>
                   _modifiers.add(TraitModifier(name: 'Undefined', percent: 0))),
             ),
             Flexible(

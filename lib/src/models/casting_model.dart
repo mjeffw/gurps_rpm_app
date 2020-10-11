@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/models/ritual_factory.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
+
+import 'ritual_factory.dart';
 
 class CastingModel with ChangeNotifier {
   Casting _casting = Casting(Ritual());

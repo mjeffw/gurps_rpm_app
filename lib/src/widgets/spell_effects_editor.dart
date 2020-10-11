@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/widgets/delete_button.dart';
-import 'package:gurps_rpm_app/src/widgets/utils.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
+import 'delete_button.dart';
+import 'utils.dart';
 
 class SpellEffectEditor extends StatelessWidget {
   const SpellEffectEditor({

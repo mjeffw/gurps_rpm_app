@@ -31,13 +31,14 @@ class DynamicListHeader extends StatelessWidget {
               indent: 8.0,
             ),
           ),
-          IconButton(
-            icon: Icon(
-              Icons.delete_sweep_rounded,
-              color: Colors.red,
+          if (deleteActive != null)
+            IconButton(
+              icon: Icon(
+                Icons.delete_sweep_rounded,
+                color: deleteActive ? Colors.grey : Colors.red,
+              ),
+              onPressed: onDelPressed,
             ),
-            onPressed: onDelPressed,
-          ),
           IconButton(
             icon: Icon(
               Icons.add_box_rounded,

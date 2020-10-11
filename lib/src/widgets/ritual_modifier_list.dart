@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_material_pickers/flutter_material_pickers.dart';
-import 'package:gurps_rpm_app/src/models/ritual_factory.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
+import '../models/ritual_factory.dart';
 import 'delete_button.dart';
 import 'dynamic_list_header.dart';
 import 'modifier_widgets/affliction_editor.dart';
@@ -13,8 +13,8 @@ import 'modifier_widgets/altered_traits_editor.dart';
 import 'modifier_widgets/area_effect_editor.dart';
 import 'modifier_widgets/bestows_editor.dart';
 import 'modifier_widgets/damage_editor.dart';
-import 'modifier_widgets/extra_energy_row.dart';
 import 'modifier_widgets/duration_row.dart';
+import 'modifier_widgets/extra_energy_row.dart';
 import 'modifier_widgets/healing_row.dart';
 import 'modifier_widgets/meta_magic_row.dart';
 
@@ -59,6 +59,7 @@ class RitualModifierList extends StatelessWidget {
               title: 'Inherent Modifiers:',
               deleteActive: deleteVisible.value,
               onAddPressed: () => _addModifier(context),
+              onDelPressed: () => deleteVisible.value = !deleteVisible.value,
             ),
             Selector<CastingModel, List<RitualModifier>>(
               selector: (_, model) => model.inherentModifiers,
@@ -111,5 +112,14 @@ class RitualModifierLine extends StatelessWidget {
 }
 
 class DeleteButtonVisible extends ChangeNotifier {
-  bool value = false;
+  bool _value = false;
+
+  bool get value => _value;
+
+  set value(bool newvalue) {
+    if (_value != newvalue) {
+      value = newvalue;
+      notifyListeners();
+    }
+  }
 }

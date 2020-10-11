@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gurps_rpm_app/src/widgets/modifier_widgets/arrow_button.dart';
-import 'package:gurps_rpm_app/src/widgets/text_converter.dart';
+
+import 'arrow_button.dart';
+import 'text_converter.dart';
 
 typedef IntUpdateCallback = void Function(int);
 typedef StepFunction = int Function(int, int);

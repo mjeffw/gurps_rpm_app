@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead_web/flutter_typeahead.dart';
-import 'package:gurps_rpm_app/src/models/casting_model.dart';
-import 'package:gurps_rpm_app/src/widgets/modifier_widgets/arrow_button.dart';
-import 'package:gurps_rpm_app/src/widgets/modifier_widgets/int_spinner.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/casting_model.dart';
+import '../arrow_button.dart';
+import '../int_spinner.dart';
 import '../utils.dart';
 import 'modifier_row.dart';
 

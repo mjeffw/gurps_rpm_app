@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/models/casting_model.dart';
-import 'package:gurps_rpm_app/src/widgets/modifier_widgets/modifier_row.dart';
-import 'package:gurps_rpm_app/src/widgets/utils.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/casting_model.dart';
-import 'arrow_button.dart';
+import '../arrow_button.dart';
+import '../utils.dart';
+import 'modifier_row.dart';
 
 class ExtraEnergyRow extends ModifierRow {
   ExtraEnergyRow({ExtraEnergy modifier, int index})
