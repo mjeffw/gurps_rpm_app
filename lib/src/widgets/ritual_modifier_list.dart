@@ -21,6 +21,8 @@ import 'modifier_widgets/range_crosstime_row.dart';
 import 'modifier_widgets/range_dimensional_row.dart';
 import 'modifier_widgets/range_info_row.dart';
 import 'modifier_widgets/range_row.dart';
+import 'modifier_widgets/speed_row.dart';
+import 'modifier_widgets/subject_weight_row.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 
@@ -39,6 +41,8 @@ final Map<Type, WidgetBuilder> _map = {
   RangeInfo: (mod, i) => RangeInfoRow(modifier: mod, index: i),
   RangeCrossTime: (mod, i) => RangeCrossTimeRow(modifier: mod, index: i),
   RangeDimensional: (mod, i) => RangeDimensionalRow(modifier: mod, index: i),
+  Speed: (mod, i) => SpeedRow(modifier: mod, index: i),
+  SubjectWeight: (mod, i) => SubjectWeightRow(modifier: mod, index: i),
 };
 
 class RitualModifierList extends StatelessWidget {
