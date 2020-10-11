@@ -40,7 +40,7 @@ class SpellEffectList extends StatelessWidget {
       children: [
         DynamicListHeader(
           title: 'Spell Effects:',
-          onPressed: () => _addPath(context),
+          onAddPressed: () => _addPath(context),
         ),
         Selector<CastingModel, List<SpellEffect>>(
           selector: (_, model) => model.inherentSpellEffects,

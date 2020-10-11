@@ -50,24 +50,30 @@ class RitualModifierList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        DynamicListHeader(
-          title: 'Inherent Modifiers:',
-          onPressed: () => _addModifier(context),
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => DeleteButtonVisible(),
+      child: Consumer<DeleteButtonVisible>(
+        builder: (_, deleteVisible, __) => Column(
+          children: [
+            DynamicListHeader(
+              title: 'Inherent Modifiers:',
+              deleteActive: deleteVisible.value,
+              onAddPressed: () => _addModifier(context),
+            ),
+            Selector<CastingModel, List<RitualModifier>>(
+              selector: (_, model) => model.inherentModifiers,
+              builder: (context, modifiers, child) {
+                var widgets = <Widget>[];
+                for (var index = 0; index < modifiers.length; index++) {
+                  widgets.add(RitualModifierLine(
+                      modifier: modifiers[index], index: index));
+                }
+                return Column(children: widgets);
+              },
+            )
+          ],
         ),
-        Selector<CastingModel, List<RitualModifier>>(
-          selector: (_, model) => model.inherentModifiers,
-          builder: (context, modifiers, child) {
-            var widgets = <Widget>[];
-            for (var index = 0; index < modifiers.length; index++) {
-              widgets.add(
-                  RitualModifierLine(modifier: modifiers[index], index: index));
-            }
-            return Column(children: widgets);
-          },
-        )
-      ],
+      ),
     );
   }
 }
@@ -102,4 +108,8 @@ class RitualModifierLine extends StatelessWidget {
       ),
     );
   }
+}
+
+class DeleteButtonVisible extends ChangeNotifier {
+  bool value = false;
 }

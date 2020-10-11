@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 
 class DynamicListHeader extends StatelessWidget {
-  const DynamicListHeader({Key key, this.title, this.onPressed})
+  const DynamicListHeader(
+      {Key key,
+      this.title,
+      this.onAddPressed,
+      this.onDelPressed,
+      this.deleteActive})
       : super(key: key);
 
   final String title;
-  final VoidCallback onPressed;
+  final VoidCallback onAddPressed;
+  final VoidCallback onDelPressed;
+  final bool deleteActive;
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +33,17 @@ class DynamicListHeader extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(
+              Icons.delete_sweep_rounded,
+              color: Colors.red,
+            ),
+            onPressed: onDelPressed,
+          ),
+          IconButton(
+            icon: Icon(
               Icons.add_box_rounded,
               color: Colors.blue,
             ),
-            onPressed: onPressed,
+            onPressed: onAddPressed,
           ),
         ],
       ),

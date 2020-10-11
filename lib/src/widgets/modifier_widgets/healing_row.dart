@@ -19,15 +19,17 @@ class HealingRow extends ModifierRow {
   @override
   List<Widget> buildModifierRowWidgets(BuildContext context) {
     return [
-      LeftArrowButton(
-        onPressed: () => Provider.of<CastingModel>(context, listen: false)
-            .updateInherentModifier(index, _healing.incrementEffect(-1)),
-      ),
+      if (isMediumScreen(context))
+        LeftArrowButton(
+          onPressed: () => Provider.of<CastingModel>(context, listen: false)
+              .updateInherentModifier(index, _healing.incrementEffect(-1)),
+        ),
       Text('${_healing.dice}'),
-      RightArrowButton(
-        onPressed: () => Provider.of<CastingModel>(context, listen: false)
-            .updateInherentModifier(index, _healing.incrementEffect(1)),
-      ),
+      if (isMediumScreen(context))
+        RightArrowButton(
+          onPressed: () => Provider.of<CastingModel>(context, listen: false)
+              .updateInherentModifier(index, _healing.incrementEffect(1)),
+        ),
       Text('${_healing.type == HealingType.fp ? 'FP' : 'HP'}'),
     ];
   }
@@ -83,7 +85,7 @@ class __EditorState extends State<_Editor> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Damage Editor'),
+            Text('${widget.modifier.name} Editor'),
             Divider(),
             columnSpacer,
             DiceSpinner(
