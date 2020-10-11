@@ -51,7 +51,6 @@ class AfflictionRow extends ModifierRow {
           onPressed: () => Provider.of<CastingModel>(context, listen: false)
               .updateInherentModifier(index, modifier.incrementEffect(1)),
         ),
-      Text(''),
     ];
   }
 

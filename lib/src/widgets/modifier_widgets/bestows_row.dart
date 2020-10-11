@@ -22,7 +22,7 @@ class BestowsRow extends ModifierRow {
   Bestows get _bestows => super.modifier;
 
   @override
-  String get label => 'Bestows a ${_isNegative() ? 'Penalty' : 'Bonus'},';
+  String get label => 'Bestows ${_isNegative() ? 'Penalty' : 'Bonus'},';
 
   bool _isNegative() => _bestows.value.isNegative;
 
@@ -41,7 +41,13 @@ class BestowsRow extends ModifierRow {
               .updateInherentModifier(index, _bestows.incrementEffect(1)),
         ),
       rowSmallSpacer,
-      Text('to ${_bestows.roll} (${rangeLabels[_bestows.range]})'),
+      Flexible(
+        fit: FlexFit.tight,
+        child: Text(
+          'to ${_bestows.roll} (${rangeLabels[_bestows.range]})',
+          overflow: TextOverflow.ellipsis,
+        ),
+      )
     ];
   }
 

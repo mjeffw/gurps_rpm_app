@@ -8,15 +8,19 @@ import '../models/casting_model.dart';
 import '../models/ritual_factory.dart';
 import 'delete_button.dart';
 import 'dynamic_list_header.dart';
-import 'modifier_widgets/affliction_editor.dart';
-import 'modifier_widgets/altered_traits_editor.dart';
-import 'modifier_widgets/area_effect_editor.dart';
-import 'modifier_widgets/bestows_editor.dart';
-import 'modifier_widgets/damage_editor.dart';
+import 'modifier_widgets/affliction_row.dart';
+import 'modifier_widgets/altered_traits_row.dart';
+import 'modifier_widgets/area_effect_row.dart';
+import 'modifier_widgets/bestows_row.dart';
+import 'modifier_widgets/damage_row.dart';
 import 'modifier_widgets/duration_row.dart';
 import 'modifier_widgets/extra_energy_row.dart';
 import 'modifier_widgets/healing_row.dart';
 import 'modifier_widgets/meta_magic_row.dart';
+import 'modifier_widgets/range_crosstime_row.dart';
+import 'modifier_widgets/range_dimensional_row.dart';
+import 'modifier_widgets/range_info_row.dart';
+import 'modifier_widgets/range_row.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 
@@ -31,6 +35,10 @@ final Map<Type, WidgetBuilder> _map = {
   ExtraEnergy: (mod, i) => ExtraEnergyRow(modifier: mod, index: i),
   Healing: (mod, i) => HealingRow(modifier: mod, index: i),
   MetaMagic: (mod, i) => MetaMagicRow(modifier: mod, index: i),
+  Range: (mod, i) => RangeRow(modifier: mod, index: i),
+  RangeInfo: (mod, i) => RangeInfoRow(modifier: mod, index: i),
+  RangeCrossTime: (mod, i) => RangeCrossTimeRow(modifier: mod, index: i),
+  RangeDimensional: (mod, i) => RangeDimensionalRow(modifier: mod, index: i),
 };
 
 class RitualModifierList extends StatelessWidget {
@@ -52,28 +60,28 @@ class RitualModifierList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (BuildContext context) => DeleteButtonVisible(),
-      child: Consumer<DeleteButtonVisible>(
-        builder: (_, deleteVisible, __) => Column(
-          children: [
-            DynamicListHeader(
+      child: Column(
+        children: [
+          Consumer<DeleteButtonVisible>(
+            builder: (_, deleteVisible, __) => DynamicListHeader(
               title: 'Inherent Modifiers:',
               deleteActive: deleteVisible.value,
               onAddPressed: () => _addModifier(context),
               onDelPressed: () => deleteVisible.value = !deleteVisible.value,
             ),
-            Selector<CastingModel, List<RitualModifier>>(
-              selector: (_, model) => model.inherentModifiers,
-              builder: (context, modifiers, child) {
-                var widgets = <Widget>[];
-                for (var index = 0; index < modifiers.length; index++) {
-                  widgets.add(RitualModifierLine(
-                      modifier: modifiers[index], index: index));
-                }
-                return Column(children: widgets);
-              },
-            )
-          ],
-        ),
+          ),
+          Selector<CastingModel, List<RitualModifier>>(
+            selector: (_, model) => model.inherentModifiers,
+            builder: (context, modifiers, child) {
+              var widgets = <Widget>[];
+              for (var index = 0; index < modifiers.length; index++) {
+                widgets.add(RitualModifierLine(
+                    modifier: modifiers[index], index: index));
+              }
+              return Column(children: widgets);
+            },
+          )
+        ],
       ),
     );
   }
@@ -93,21 +101,38 @@ class RitualModifierLine extends StatelessWidget {
 
     final widget = buildModifierEditor();
 
-    return IntrinsicHeight(
-      child: Container(
-        color: (index.isOdd) ? oddBackground : null,
-        padding: EdgeInsets.only(right: 24.0),
-        child: Row(
-          children: [
-            widget,
-            DeleteButton(
-              onPressed: () => Provider.of<CastingModel>(context, listen: false)
-                  .removeInherentModifier(index),
+    return Consumer<DeleteButtonVisible>(
+      key: Key('RitualModifierLineWrapper:$index'),
+      builder: (_, deleteVisible, __) => IntrinsicHeight(
+        child: Dismissible(
+          key: Key('RitualModifierLine:$index'),
+          background: Container(color: Colors.red),
+          onDismissed: (direction) => _deleteAction(context),
+          child: Container(
+            color: (index.isOdd) ? oddBackground : null,
+            padding: EdgeInsets.only(right: 24.0),
+            child: Row(
+              children: [
+                widget,
+                if (deleteVisible.value)
+                  DeleteButton(
+                    onPressed: () => _deleteAction(context),
+                  ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  void _deleteAction(BuildContext context) {
+    Provider.of<CastingModel>(context, listen: false)
+        .removeInherentModifier(index);
+
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text('Modifier ${modifier.name} deleted'),
+    ));
   }
 }
 
@@ -118,7 +143,7 @@ class DeleteButtonVisible extends ChangeNotifier {
 
   set value(bool newvalue) {
     if (_value != newvalue) {
-      value = newvalue;
+      _value = newvalue;
       notifyListeners();
     }
   }

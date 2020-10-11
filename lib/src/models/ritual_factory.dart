@@ -13,4 +13,10 @@ Map<String, ModifierFactory> modifierFactories = {
   ExtraEnergy.label: () => ExtraEnergy(),
   Healing.label: () => Healing(),
   MetaMagic.label: () => MetaMagic(),
+  Range.label: () => Range(),
+  RangeInfo.label: () => RangeInfo(),
+  RangeCrossTime.label: () => RangeCrossTime(),
+  RangeDimensional.label: () => RangeDimensional(),
+  Speed.label: () => Speed(),
+  SubjectWeight.label: () => SubjectWeight()
 };

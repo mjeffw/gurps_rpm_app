@@ -32,12 +32,15 @@ class DynamicListHeader extends StatelessWidget {
             ),
           ),
           if (deleteActive != null)
-            IconButton(
-              icon: Icon(
-                Icons.delete_sweep_rounded,
-                color: deleteActive ? Colors.grey : Colors.red,
+            Tooltip(
+              message: 'Display or hide Delete buttons',
+              child: IconButton(
+                icon: Icon(
+                  Icons.delete_sweep_rounded,
+                  color: deleteActive ? Colors.grey : Colors.blue,
+                ),
+                onPressed: onDelPressed,
               ),
-              onPressed: onDelPressed,
             ),
           IconButton(
             icon: Icon(
