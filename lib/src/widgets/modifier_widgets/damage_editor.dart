@@ -91,14 +91,12 @@ class _EditorState extends State<_Editor> {
     _modifiers.addAll(widget.modifier.modifiers);
   }
 
-  Damage _createModifier() {
-    return Damage(
-        dice: _dice,
-        direct: _direct,
-        explosive: _explosive,
-        type: _type,
-        modifiers: _modifiers);
-  }
+  Damage _createModifier() => Damage(
+      dice: _dice,
+      direct: _direct,
+      explosive: _explosive,
+      type: _type,
+      modifiers: _modifiers);
 
   @override
   Widget build(BuildContext context) {
