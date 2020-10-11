@@ -29,7 +29,7 @@ dependencies:
   tuple: ^1.0.3
   flutter_masked_text: ^0.8.0
   gurps_rpm_model:
-    version: 0.8.6
+    version: 0.8.9
     git:
       url: https://github.com/mjeffw/gurps_rpm_model.git
   gurps_dice:
