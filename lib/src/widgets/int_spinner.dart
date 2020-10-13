@@ -16,6 +16,7 @@ class IntSpinner extends StatefulWidget {
     Key key,
     @required this.onChanged,
     this.initialValue = 0,
+    this.valueNotifier,
     this.maxValue = 1000000,
     this.minValue = -1000000,
     this.bigStep = 10,
@@ -29,6 +30,7 @@ class IntSpinner extends StatefulWidget {
         super(key: key);
 
   final int initialValue;
+  final ValueNotifier<int> valueNotifier;
   final StringToIntConverter textConverter;
   final InputDecoration decoration;
   final IntUpdateCallback onChanged;
@@ -55,7 +57,9 @@ class _IntSpinnerState extends State<IntSpinner> {
         : (value > widget.maxValue)
             ? widget.maxValue
             : value;
-    _controller.text = widget.textConverter.asString(newValue);
+
+    if (_controller.text != widget.textConverter.asString(newValue))
+      _controller.text = widget.textConverter.asString(newValue);
   }
 
   @override
@@ -63,12 +67,25 @@ class _IntSpinnerState extends State<IntSpinner> {
     super.initState();
     _controller = TextEditingController(
         text: widget.textConverter.asString(widget.initialValue));
-    _controller.addListener(() => widget.onChanged(_textAsInt));
+    _controller.addListener(_onChanged);
+    if (widget.valueNotifier != null)
+      widget.valueNotifier.addListener(_updateValue);
+  }
+
+  void _onChanged() {
+    widget.onChanged(_textAsInt);
+  }
+
+  void _updateValue() {
+    if (_textAsInt != widget.valueNotifier.value)
+      _textAsInt = widget.valueNotifier.value;
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    if (widget.valueNotifier != null)
+      widget.valueNotifier.removeListener(_updateValue);
     super.dispose();
   }
 
@@ -77,14 +94,12 @@ class _IntSpinnerState extends State<IntSpinner> {
     return Row(
       children: [
         DoubleLeftArrowButton(
-          onPressed: () => setState(() {
-            _textAsInt = widget.stepFunction(_textAsInt, -widget.bigStep);
-          }),
+          onPressed: () => setState(() =>
+              _textAsInt = widget.stepFunction(_textAsInt, -widget.bigStep)),
         ),
         LeftArrowButton(
-          onPressed: () => setState(() {
-            _textAsInt = widget.stepFunction(_textAsInt, -widget.smallStep);
-          }),
+          onPressed: () => setState(() =>
+              _textAsInt = widget.stepFunction(_textAsInt, -widget.smallStep)),
         ),
         Expanded(
           child: SizedBox(
@@ -93,14 +108,12 @@ class _IntSpinnerState extends State<IntSpinner> {
           ),
         ),
         RightArrowButton(
-          onPressed: () => setState(() {
-            _textAsInt = widget.stepFunction(_textAsInt, widget.smallStep);
-          }),
+          onPressed: () => setState(() =>
+              _textAsInt = widget.stepFunction(_textAsInt, widget.smallStep)),
         ),
         DoubleRightArrowButton(
-          onPressed: () => setState(() {
-            _textAsInt = widget.stepFunction(_textAsInt, widget.bigStep);
-          }),
+          onPressed: () => setState(() =>
+              _textAsInt = widget.stepFunction(_textAsInt, widget.bigStep)),
         ),
       ],
     );

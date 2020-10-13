@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/casting_model.dart';
-import '../utils.dart';
-import '../arrow_button.dart';
 import '../int_spinner.dart';
+import '../utils.dart';
+import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class AlteredTraitsRow extends ModifierRow {
@@ -16,22 +14,10 @@ class AlteredTraitsRow extends ModifierRow {
   AlteredTraits get alteredTrait => super.modifier;
 
   @override
-  List<Widget> buildModifierRowWidgets(BuildContext context) {
-    return [
-      Text('${alteredTrait.trait.nameLevel} '),
-      if (isMediumScreen(context))
-        LeftArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, alteredTrait.incrementEffect(-1)),
-        ),
-      Text('(${alteredTrait.characterPoints})'),
-      if (isMediumScreen(context))
-        RightArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, alteredTrait.incrementEffect(1)),
-        ),
-    ];
-  }
+  String get detailText => '${alteredTrait.trait.nameLevel} ';
+
+  @override
+  String get effectText => '(${alteredTrait.characterPoints})';
 
   @override
   Widget dialogBuilder(BuildContext context) =>
@@ -81,86 +67,76 @@ class _EditorState extends State<_Editor> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      actions: [
-        FlatButton(
-          child: const Text('CANCEL'),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        FlatButton(
-          child: const Text('OK'),
-          onPressed: () {
-            var copy = modifier.copyWith(
-              trait: Trait(
-                name: _traitNameController.text,
-                hasLevels: _hasLevels,
-                baseCost: _baseCost,
-                costPerLevel: _costPerLevel,
-                levels: _levels,
-              ),
-            );
-            Navigator.of(context).pop<RitualModifier>(copy);
-          },
-        ),
-      ],
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('Altered Trait Editor'),
-          Divider(),
-          columnSpacer,
-          TextField(
-            controller: _traitNameController,
-            autofocus: true,
-            decoration: InputDecoration(
-              labelText: 'Effect',
-              border: const OutlineInputBorder(),
-            ),
-          ),
-          columnSpacer,
-          IntSpinner(
-            onChanged: (value) => setState(() {
-              _baseCost = value;
-            }),
-            initialValue: _baseCost,
-            textFieldWidth: 90.0,
-            decoration: InputDecoration(
-              labelText: 'Base Cost',
-            ),
-          ),
-          columnSpacer,
-          SwitchListTile(
-            value: _hasLevels,
-            onChanged: (state) => setState(() {
-              _hasLevels = state;
-            }),
-            title: Text('Has Levels'),
-          ),
-          if (_hasLevels) ...[
-            columnSpacer,
-            IntSpinner(
-              initialValue: _levels,
-              decoration: InputDecoration(labelText: 'Levels'),
-              textFieldWidth: 90.0,
-              bigStep: 5,
-              minValue: 0,
-              onChanged: (value) => setState(() {
-                _levels = value;
-              }),
-            ),
-            columnSpacer,
-            IntSpinner(
-              onChanged: (value) => setState(() {
-                _costPerLevel = value;
-              }),
-              bigStep: 5,
-              textFieldWidth: 90.0,
-              decoration: InputDecoration(labelText: 'Cost/Level'),
-              initialValue: _costPerLevel,
-            )
-          ],
-        ],
-      ),
+    return EditorDialog(
+      provider: _createModifier,
+      name: widget.modifier.name,
+      widgets: _modifierWidgets(),
     );
+  }
+
+  AlteredTraits _createModifier() {
+    return modifier.copyWith(
+        trait: Trait(
+      name: _traitNameController.text,
+      hasLevels: _hasLevels,
+      baseCost: _baseCost,
+      costPerLevel: _costPerLevel,
+      levels: _levels,
+    ));
+  }
+
+  List<Widget> _modifierWidgets() {
+    return [
+      TextField(
+        controller: _traitNameController,
+        autofocus: true,
+        decoration: InputDecoration(
+          labelText: 'Effect',
+          border: const OutlineInputBorder(),
+        ),
+      ),
+      columnSpacer,
+      IntSpinner(
+        onChanged: (value) => setState(() {
+          _baseCost = value;
+        }),
+        initialValue: _baseCost,
+        textFieldWidth: 90.0,
+        decoration: InputDecoration(
+          labelText: 'Base Cost',
+        ),
+      ),
+      columnSpacer,
+      SwitchListTile(
+        value: _hasLevels,
+        onChanged: (state) => setState(() {
+          _hasLevels = state;
+        }),
+        title: Text('Has Levels'),
+      ),
+      if (_hasLevels) ...[
+        columnSpacer,
+        IntSpinner(
+          initialValue: _levels,
+          decoration: InputDecoration(labelText: 'Levels'),
+          textFieldWidth: 90.0,
+          bigStep: 5,
+          minValue: 0,
+          onChanged: (value) => setState(() {
+            _levels = value;
+          }),
+        ),
+        columnSpacer,
+        IntSpinner(
+          onChanged: (value) => setState(() {
+            _costPerLevel = value;
+          }),
+          bigStep: 5,
+          textFieldWidth: 90.0,
+          decoration: InputDecoration(labelText: 'Cost/Level'),
+          initialValue: _costPerLevel,
+        )
+      ],
+    ];
   }
 }

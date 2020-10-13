@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead_web/flutter_typeahead.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/casting_model.dart';
-import '../arrow_button.dart';
 import '../int_spinner.dart';
 import '../utils.dart';
+import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class AfflictionStunRow extends ModifierRow {
@@ -15,12 +13,12 @@ class AfflictionStunRow extends ModifierRow {
         super(index: index, modifier: modifier);
 
   @override
-  List<Widget> buildModifierRowWidgets(BuildContext context) {
-    return [];
-  }
+  List<Widget> buildModifierRowWidgets(BuildContext context) => [];
 
   @override
   String get label => '${modifier.name}';
+
+  String get effectText => null;
 
   @override
   bool get isEditable => false;
@@ -34,25 +32,12 @@ class AfflictionRow extends ModifierRow {
       : assert(modifier is Affliction),
         super(modifier: modifier, index: index);
 
-  Affliction get affliction => super.modifier;
+  Affliction get _affliction => super.modifier;
 
-  @override
-  List<Widget> buildModifierRowWidgets(BuildContext context) {
-    return [
-      Text('${affliction.effect}, '),
-      if (isMediumScreen(context))
-        LeftArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, modifier.incrementEffect(-1)),
-        ),
-      Text('(${(affliction.percent >= 0) ? '+' : ''}${affliction.percent}%)'),
-      if (isMediumScreen(context))
-        RightArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, modifier.incrementEffect(1)),
-        ),
-    ];
-  }
+  String get detailText => '${_affliction.effect}, ';
+
+  String get effectText =>
+      '${(_affliction.percent >= 0) ? '+' : ''}${_affliction.percent}%';
 
   @override
   Widget dialogBuilder(BuildContext context) =>
@@ -99,89 +84,92 @@ class _Editor extends StatefulWidget {
   _EditorState createState() => _EditorState(modifier);
 }
 
+class IntEditingController extends ValueNotifier<int> {
+  IntEditingController(int value) : super(value);
+}
+
 class _EditorState extends State<_Editor> {
   _EditorState(this.modifier);
 
-  TextEditingController _effectController;
   Affliction modifier;
 
-  int _percent;
+  TextEditingController _effectController;
+
+  ValueNotifier<int> _percent;
+
+  int get percent => _percent.value;
+
+  set percent(int value) {
+    _percent.value = value;
+  }
 
   @override
   void initState() {
     super.initState();
     _effectController = TextEditingController(text: modifier.effect);
-    _percent = modifier.percent;
+    _percent = ValueNotifier(modifier.percent);
   }
 
   @override
   void dispose() {
     _effectController.dispose();
+    _percent.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      actions: [
-        FlatButton(
-          child: const Text('CANCEL'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        FlatButton(
-          child: const Text('OK'),
-          onPressed: () {
-            var copy = modifier.copyWith(
-                effect: _effectController.text, percent: _percent);
-
-            Navigator.of(context).pop<RitualModifier>(copy);
-          },
-        ),
-      ],
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('Affliction Editor'),
-          Divider(),
-          columnSpacer,
-          TypeAheadField<MapEntry<String, int>>(
-            textFieldConfiguration: TextFieldConfiguration(
-              controller: _effectController,
-              autofocus: true,
-              decoration: InputDecoration(
-                labelText: 'Effect',
-                border: const OutlineInputBorder(),
-              ),
-            ),
-            hideOnEmpty: true,
-            suggestionsCallback: getSuggestions,
-            itemBuilder: (context, suggestion) => ListTile(
-                title: Text('${suggestion.key} (${suggestion.value})')),
-            onSuggestionSelected: (suggestion) {
-              setState(() {
-                _effectController.text = suggestion.key;
-                _percent = suggestion.value;
-              });
-            },
-          ),
-          columnSpacer,
-          IntSpinner(
-            onChanged: (value) => setState(() => _percent = value),
-            initialValue: _percent,
-            bigStep: 50,
-            smallStep: 5,
-            minValue: 0,
-            textFieldWidth: 90.0,
-            decoration: InputDecoration(
-              suffixText: '%',
-              labelText: 'Percent',
-            ),
-          ),
-        ],
-      ),
+    return EditorDialog(
+      provider: _createModifier,
+      name: widget.modifier.name,
+      widgets: _modifierWidgets(),
     );
+  }
+
+  Affliction _createModifier() {
+    return modifier.copyWith(
+      effect: _effectController.text,
+      percent: percent,
+    );
+  }
+
+  List<Widget> _modifierWidgets() {
+    return [
+      TypeAheadField<MapEntry<String, int>>(
+        textFieldConfiguration: TextFieldConfiguration(
+          controller: _effectController,
+          autofocus: true,
+          decoration: InputDecoration(
+            labelText: 'Effect',
+            border: const OutlineInputBorder(),
+          ),
+        ),
+        hideOnEmpty: true,
+        suggestionsCallback: getSuggestions,
+        itemBuilder: (context, suggestion) =>
+            ListTile(title: Text('${suggestion.key} (${suggestion.value})')),
+        onSuggestionSelected: (suggestion) {
+          setState(() {
+            _effectController.text = suggestion.key;
+            percent = suggestion.value;
+          });
+        },
+      ),
+      columnSpacer,
+      IntSpinner(
+        onChanged: (value) => setState(() => percent = value),
+        valueNotifier: _percent,
+        initialValue: percent,
+        bigStep: 50,
+        smallStep: 5,
+        minValue: 0,
+        textFieldWidth: 90.0,
+        decoration: InputDecoration(
+          suffixText: '%',
+          labelText: 'Percent',
+        ),
+      ),
+    ];
   }
 
   List<MapEntry<String, int>> getSuggestions(String pattern) {

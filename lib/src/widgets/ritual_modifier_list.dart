@@ -82,8 +82,10 @@ class RitualModifierList extends StatelessWidget {
               return ListView.builder(
                 shrinkWrap: true,
                 itemCount: modifiers.length,
-                itemBuilder: (context, index) => RitualModifierLine(
-                    modifier: modifiers[index], index: index),
+                itemBuilder: (_, index) => RitualModifierLine(
+                  modifier: modifiers[index],
+                  index: index,
+                ),
               );
             },
           )
@@ -106,10 +108,9 @@ class RitualModifierLine extends StatelessWidget {
     final Color oddBackground = Theme.of(context).accentColor.withOpacity(0.05);
 
     return Consumer<DeleteButtonVisible>(
-      key: UniqueKey(),
       builder: (_, deleteVisible, __) => Dismissible(
         direction: DismissDirection.endToStart,
-        key: Key('RitualModifierLine:$index'),
+        key: UniqueKey(),
         background: Container(color: Colors.red),
         onDismissed: (direction) => _deleteAction(context),
         child: Container(

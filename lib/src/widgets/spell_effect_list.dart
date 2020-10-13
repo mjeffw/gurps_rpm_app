@@ -31,8 +31,10 @@ class SpellEffectList extends StatelessWidget {
         title: 'Select Path:',
         items: _pathOptions,
         selectedItem: 'Body',
-        onChanged: (value) => Provider.of<CastingModel>(context, listen: false)
-            .addInherentSpellEffect(value));
+        onChanged: (value) {
+          var model = Provider.of<CastingModel>(context, listen: false);
+          model.addInherentSpellEffect(value);
+        });
   }
 
   @override
@@ -52,12 +54,14 @@ class SpellEffectList extends StatelessWidget {
           Selector<CastingModel, List<SpellEffect>>(
             selector: (_, model) => model.inherentSpellEffects,
             builder: (context, effects, child) {
-              List<Widget> widgets = [];
-              for (var index = 0; index < effects.length; index++) {
-                widgets.add(
-                    SpellEffectEditor(effect: effects[index], index: index));
-              }
-              return Column(children: widgets);
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: effects.length,
+                itemBuilder: (_, index) => SpellEffectEditor(
+                  effect: effects[index],
+                  index: index,
+                ),
+              );
             },
           ),
         ],
