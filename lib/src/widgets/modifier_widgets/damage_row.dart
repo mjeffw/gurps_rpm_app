@@ -8,7 +8,7 @@ import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import '../delete_button.dart';
 import '../dice_spinner.dart';
 import '../dynamic_list_header.dart';
-import '../utils.dart';
+import '../../utils/utils.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 

@@ -3,7 +3,7 @@ import 'package:gurps_rpm_app/src/widgets/modifier_widgets/editor_dialog.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
 import '../int_spinner.dart';
-import '../utils.dart';
+import '../../utils/utils.dart';
 import 'modifier_row.dart';
 
 const rangeLabels = <BestowsRange, String>{

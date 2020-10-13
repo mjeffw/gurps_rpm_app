@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../models/casting_model.dart';
 import '../widgets/thirdparty/adaptive_scaffold.dart';
 import 'create_ritual_page.dart';
 import 'gather_energy_page.dart';
@@ -17,6 +15,10 @@ class _HomePageState extends State<HomePage> {
   // ignore: unused_field
   var _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Widget createRitualPage = CreateRitualPage();
+  Widget gatherEnergyPage = GatherEnergyPage();
+  Widget optionsPage = OptionsPage();
+
   @override
   void initState() {
     super.initState();
@@ -24,38 +26,35 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => CastingModel(),
-      builder: (context, _) => AdaptiveScaffold(
-        title: Text('GURPS: Ritual Path Magic'),
-        currentIndex: _pageIndex,
-        destinations: [
-          AdaptiveScaffoldDestination(
-            title: 'Create Ritual',
-            icon: Icons.home,
-          ),
-          AdaptiveScaffoldDestination(
-            title: 'Gather Energy',
-            icon: Icons.add_sharp,
-          ),
-          AdaptiveScaffoldDestination(
-            title: 'Options',
-            icon: Icons.cake,
-          ),
-        ],
-        body: _pageAtIndex(_pageIndex),
-        onNavigationIndexChange: (newIndex) {
-          setState(() {
-            _pageIndex = newIndex;
-          });
-        },
-      ),
+    return AdaptiveScaffold(
+      title: Text('GURPS: Ritual Path Magic'),
+      currentIndex: _pageIndex,
+      destinations: [
+        AdaptiveScaffoldDestination(
+          title: 'Create Ritual',
+          icon: Icons.home,
+        ),
+        AdaptiveScaffoldDestination(
+          title: 'Gather Energy',
+          icon: Icons.add_sharp,
+        ),
+        AdaptiveScaffoldDestination(
+          title: 'Options',
+          icon: Icons.cake,
+        ),
+      ],
+      body: _pageAtIndex(_pageIndex),
+      onNavigationIndexChange: (newIndex) {
+        setState(() {
+          _pageIndex = newIndex;
+        });
+      },
     );
   }
 
-  static Widget _pageAtIndex(int index) {
-    if (index == 0) return CreateRitualPage();
-    if (index == 1) return GatherEnergyPage();
-    return OptionsPage();
+  Widget _pageAtIndex(int index) {
+    if (index == 0) return createRitualPage;
+    if (index == 1) return gatherEnergyPage;
+    return optionsPage;
   }
 }

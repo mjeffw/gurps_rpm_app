@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
-import '../utils.dart';
+import '../../utils/utils.dart';
 import 'modifier_row.dart';
 
 class EditorDialog extends StatelessWidget {

@@ -3,7 +3,7 @@ import 'package:gurps_dice/gurps_dice.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
 import '../dice_spinner.dart';
-import '../utils.dart';
+import '../../utils/utils.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 

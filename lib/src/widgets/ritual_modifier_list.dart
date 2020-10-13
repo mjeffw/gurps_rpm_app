@@ -24,7 +24,7 @@ import 'modifier_widgets/range_info_row.dart';
 import 'modifier_widgets/range_row.dart';
 import 'modifier_widgets/speed_row.dart';
 import 'modifier_widgets/subject_weight_row.dart';
-import 'utils.dart';
+import '../utils/utils.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 

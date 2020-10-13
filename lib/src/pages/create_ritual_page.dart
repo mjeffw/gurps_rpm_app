@@ -11,10 +11,13 @@ import '../widgets/spell_effect_list.dart';
 class CreateRitualPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-        child: CreateRitualPanel(),
+    return ChangeNotifierProvider(
+      create: (context) => CastingModel(),
+      builder: (context, _) => SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          child: CreateRitualPanel(),
+        ),
       ),
     );
   }
@@ -52,6 +55,7 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
 
     var children2 = [
       ProviderSelectorTextField<CastingModel>(
+        key: Key('__ritualname__'),
         valueProvider: () =>
             Provider.of<CastingModel>(context, listen: false).name,
         onSubmitted: _titleUpdated,

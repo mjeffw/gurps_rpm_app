@@ -9,8 +9,6 @@ typedef StepFunction = int Function(int, int);
 
 int step(int x, int y) => x + y;
 
-List<TextInputFormatter> _formatters = [FilteringTextInputFormatter.digitsOnly];
-
 class IntSpinner extends StatefulWidget {
   const IntSpinner({
     Key key,
@@ -48,7 +46,7 @@ class IntSpinner extends StatefulWidget {
 
 class _IntSpinnerState extends State<IntSpinner> {
   TextEditingController _controller;
-
+  bool _validInput = true;
   int get _textAsInt => widget.textConverter.asInt(_controller.text);
 
   set _textAsInt(int value) {
@@ -73,7 +71,18 @@ class _IntSpinnerState extends State<IntSpinner> {
   }
 
   void _onChanged() {
-    widget.onChanged(_textAsInt);
+    String text = _controller.text.trim();
+    print(text);
+    setState(() {
+      var value = widget.textConverter.asInt(text);
+      print(value);
+      _validInput = (value.toString() == text);
+      print(_validInput);
+      if (_validInput) {
+        _textAsInt = value;
+        widget.onChanged(_textAsInt);
+      }
+    });
   }
 
   void _updateValue() {
@@ -120,13 +129,18 @@ class _IntSpinnerState extends State<IntSpinner> {
   }
 
   TextFormField _buildTextFormField() {
+    TextInputFormatter formatter = (widget.minValue < 0)
+        ? FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))
+        : FilteringTextInputFormatter.digitsOnly;
+
     return TextFormField(
       textAlign: TextAlign.right,
       controller: _controller,
       keyboardType: _keyboardType(),
-      inputFormatters: widget.inputFormatters ?? _formatters,
+      inputFormatters: widget.inputFormatters ?? [formatter],
       decoration: widget.decoration.copyWith(
         border: const OutlineInputBorder(),
+        errorText: _validInput ? null : 'Invalid input',
       ),
     );
   }

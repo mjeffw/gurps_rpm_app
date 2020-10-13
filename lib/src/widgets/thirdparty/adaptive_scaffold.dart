@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../utils.dart';
+import '../../utils/utils.dart';
 
 /// See bottomNavigationBarItem or NavigationRailDestination
 class AdaptiveScaffoldDestination {

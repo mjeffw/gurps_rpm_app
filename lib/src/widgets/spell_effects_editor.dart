@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
 import 'delete_button.dart';
-import 'utils.dart';
+import '../utils/utils.dart';
 
 class SpellEffectEditor extends StatelessWidget {
   const SpellEffectEditor({
