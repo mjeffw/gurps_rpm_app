@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gurps_rpm_app/src/widgets/int_spinner.dart';
-import 'package:gurps_rpm_app/src/widgets/text_converter.dart';
+import 'package:gurps_rpm_app/src/utils/text_converter.dart';
 
 void main() {
   group('IntSpinner', () {
@@ -197,7 +197,7 @@ void main() {
       ));
 
       var finder = find.byKey(ValueKey('IntSpinner-TEXT'));
-      TextFormField txt = tester.widget(finder);
+      TextField txt = tester.widget(finder);
       expect(txt.controller.text, equals('10'));
 
       await tester.tap(find.byKey(ValueKey('IntSpinner-LEFT2')));
@@ -492,7 +492,7 @@ void main() {
       expect(x, equals(2048));
     });
 
-    testWidgets('should allow text converter to be set',
+    testWidgets('should allow custom text conversions',
         (WidgetTester tester) async {
       int x;
 
@@ -505,7 +505,7 @@ void main() {
                 onChanged: (value) => x = value,
                 textConverter: DigitsToText(),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(r'[a-zA-Z ]')
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]'))
                 ],
               ),
             ],
@@ -514,7 +514,7 @@ void main() {
       ));
 
       var finder = find.byKey(ValueKey('IntSpinner-TEXT'));
-      TextFormField txt = tester.widget(finder);
+      TextField txt = tester.widget(finder);
       expect(txt.controller.text, equals('Zero'));
 
       await tester.tap(find.byKey(ValueKey('IntSpinner-LEFT2')));
@@ -534,45 +534,96 @@ void main() {
 
       await tester.tap(find.byKey(ValueKey('IntSpinner-RIGHT2')));
       expect(txt.controller.text, equals('One One'));
+
+      await tester.enterText(
+          find.byKey(ValueKey('IntSpinner-TEXT')), 'Negative One Two Three');
+      expect(x, equals(-123));
+    });
+
+    testWidgets('should allow value changes from external code',
+        (WidgetTester tester) async {
+      ValueNotifier<int> changeNotifier = ValueNotifier<int>(0);
+      int x;
+
+      await tester.pumpWidget(MaterialApp(
+        home: Card(
+          child: Column(
+            children: [
+              IntSpinner(
+                key: ValueKey('IntSpinner'),
+                onChanged: (value) => x = value,
+                valueNotifier: changeNotifier,
+              ),
+            ],
+          ),
+        ),
+      ));
+
+      expect(x, equals(0));
+
+      changeNotifier.value = 77;
+      expect(x, equals(77));
+    });
+
+    testWidgets('should flag invalid values', (WidgetTester tester) async {
+      int x;
+      await tester.pumpWidget(MaterialApp(
+        home: Card(
+          child: Column(
+            children: [
+              IntSpinner(
+                key: ValueKey('IntSpinner'),
+                onChanged: (value) => x = value,
+              ),
+            ],
+          ),
+        ),
+      ));
+
+      expect(x, equals(0));
+
+      // Enter valid text
+      await tester.enterText(find.byKey(ValueKey('IntSpinner-TEXT')), '-2200');
+      expect(x, equals(-2200));
+
+      // Enter invalid text
+      await tester.enterText(find.byKey(ValueKey('IntSpinner-TEXT')), '2-200');
+      expect(x, equals(-2200)); // unchanged!!
+
+      // TODO uncomment when i have a solution:
+      // https://stackoverflow.com/questions/64468890/flutter-widget-tests-cannot-find-inputdecoration-errortext
+      // TextField txt = tester.widget(find.byKey(ValueKey('IntSpinner-TEXT')));
+      // expect(txt.decoration.errorText, equals('Invalid input'));
     });
   });
 }
 
 class DigitsToText extends StringToIntConverter {
   @override
-  String toA(int input) {
-    List<int> digits = _getDigits(input);
-    var reduce = digits
-        .map((it) => _toWord(it))
-        .reduce((value, element) => '$value $element');
-    return reduce;
-  }
+  String toA(int input) =>
+      _getDigits(input).map((it) => _toWord(it)).reduce((a, b) => '$a $b');
 
   @override
   int toB(String input) {
-    List<String> words = input.split(' ');
-
-    int numberDigits = 0;
     int value = 0;
     int sign = 1;
-    for (var word in words) {
+    for (var word in input.split(' ')) {
       if (word == 'Negative')
         sign = -1;
-      else
-        value = (value * pow(10, numberDigits++)) + _words.indexOf(word);
+      else {
+        if (value > 0) value = value * 10;
+        value = value + _words.indexOf(word);
+      }
     }
 
     return sign * value;
   }
 
-  List<int> _getDigits(int input) {
-    List<int> list = [];
-    String value = input.toString();
-    for (var character in value.characters) {
-      list.add((character == '-') ? -1 : int.parse(character));
-    }
-    return list;
-  }
+  List<int> _getDigits(int input) => input
+      .toString()
+      .characters
+      .map((it) => (it == '-') ? -1 : int.parse(it))
+      .toList();
 
   static final List<String> _words = [
     'Zero',
@@ -584,13 +635,10 @@ class DigitsToText extends StringToIntConverter {
     'Six',
     'Seven',
     'Eight',
-    'Nine',
+    'Nine'
   ];
 
-  _toWord(int it) {
-    if (it == -1) return 'Negative';
-    return _words[it];
-  }
+  String _toWord(int it) => (it == -1) ? 'Negative' : _words[it];
 }
 
 int _calculateExponent(int value) {

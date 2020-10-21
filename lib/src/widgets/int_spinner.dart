@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'arrow_button.dart';
-import 'text_converter.dart';
+import '../utils/text_converter.dart';
 
 typedef IntUpdateCallback = void Function(int);
 typedef StepFunction = int Function(int, int);
@@ -76,8 +76,7 @@ class _IntSpinnerState extends State<IntSpinner> {
     String text = _controller.text.trim();
     setState(() {
       var value = widget.textConverter.asInt(text);
-
-      _validInput = (value.toString() == text);
+      _validInput = (widget.textConverter.asString(value) == text);
 
       if (_validInput) {
         _textAsInt = value;
@@ -136,12 +135,12 @@ class _IntSpinnerState extends State<IntSpinner> {
       ? (widget.key as ValueKey).value
       : widget.key.toString();
 
-  TextFormField _buildTextFormField() {
+  Widget _buildTextFormField() {
     TextInputFormatter formatter = (widget.minValue < 0)
         ? FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))
         : FilteringTextInputFormatter.digitsOnly;
 
-    return TextFormField(
+    return TextField(
       key: ValueKey('$keyString-TEXT'),
       textAlign: TextAlign.right,
       controller: _controller,
