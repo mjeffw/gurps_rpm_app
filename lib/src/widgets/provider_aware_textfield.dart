@@ -9,7 +9,6 @@ class ProviderSelectorTextField<P extends ChangeNotifier>
     Key key,
     @required this.valueProvider,
     this.onSubmitted,
-    this.onEditingComplete,
     this.autofocus = false,
     this.style,
     this.decoration = const InputDecoration(),
@@ -18,7 +17,6 @@ class ProviderSelectorTextField<P extends ChangeNotifier>
 
   final String Function(BuildContext, ChangeNotifier) valueProvider;
   final ValueChanged<String> onSubmitted;
-  final VoidCallback onEditingComplete;
   final bool autofocus;
   final TextStyle style;
   final InputDecoration decoration;
@@ -62,7 +60,6 @@ class _ProviderSelectorTextFieldState<P extends ChangeNotifier>
           key: Key('$_keyText-TEXT'),
           controller: _controller,
           onSubmitted: widget.onSubmitted,
-          onEditingComplete: widget.onEditingComplete,
           autofocus: widget.autofocus,
           style: widget.style,
           decoration: widget.decoration,
