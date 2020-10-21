@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class RightArrowButton extends StatelessWidget {
-  const RightArrowButton({VoidCallback onPressed})
-      : this._onPressed = onPressed;
+  const RightArrowButton({Key key, VoidCallback onPressed})
+      : this._onPressed = onPressed,
+        super(key: key);
 
   final VoidCallback _onPressed;
 
@@ -22,28 +23,29 @@ class RightArrowButton extends StatelessWidget {
 }
 
 class DoubleRightArrowButton extends RightArrowButton {
-  const DoubleRightArrowButton({VoidCallback onPressed})
-      : super(onPressed: onPressed);
+  const DoubleRightArrowButton({Key key, VoidCallback onPressed})
+      : super(key: key, onPressed: onPressed);
 
   @override
   IconData _iconData() => Icons.fast_forward;
 }
 
 class LeftArrowButton extends RightArrowButton {
-  const LeftArrowButton({VoidCallback onPressed}) : super(onPressed: onPressed);
+  const LeftArrowButton({Key key, VoidCallback onPressed})
+      : super(key: key, onPressed: onPressed);
 
   @override
   Widget _buildIcon(IconData icon) {
     return RotatedBox(
       quarterTurns: 2,
-      child: Icon(icon, color: Colors.blue),
+      child: Icon(icon, color: Colors.cyan),
     );
   }
 }
 
 class DoubleLeftArrowButton extends LeftArrowButton {
-  const DoubleLeftArrowButton({VoidCallback onPressed})
-      : super(onPressed: onPressed);
+  const DoubleLeftArrowButton({Key key, VoidCallback onPressed})
+      : super(key: key, onPressed: onPressed);
 
   @override
   IconData _iconData() => Icons.fast_forward;

@@ -78,9 +78,15 @@ class _EditorState extends State<_Editor> {
           suffixText: 'yds',
         ),
         stepFunction: (currentRadius, increment) {
-          int value = AreaOfEffect.radiusToStep(currentRadius);
-          value += increment;
-          return (value <= 0) ? 0 : AreaOfEffect.stepToRadius(value);
+          return AreaOfEffect(
+                  radius: _radius,
+                  numberTargets: _numberTargets,
+                  excludes: _excludes)
+              .incrementEffect(increment)
+              .radius;
+          //   int value = AreaOfEffect.radiusToStep(currentRadius);
+          //   value += increment;
+          //   return (value <= 0) ? 0 : AreaOfEffect.stepToRadius(value);
         },
       ),
       columnSpacer,

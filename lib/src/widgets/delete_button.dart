@@ -10,7 +10,7 @@ class DeleteButton extends StatelessWidget {
     return IconButton(
         icon: Icon(
           Icons.remove_circle_rounded,
-          color: Colors.red,
+          color: Colors.deepOrange,
         ),
         onPressed: onPressed);
   }

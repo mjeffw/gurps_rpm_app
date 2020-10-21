@@ -29,6 +29,7 @@ class IntSpinner extends StatefulWidget {
 
   final int initialValue;
   final ValueNotifier<int> valueNotifier;
+
   final StringToIntConverter textConverter;
   final InputDecoration decoration;
   final IntUpdateCallback onChanged;
@@ -47,6 +48,7 @@ class IntSpinner extends StatefulWidget {
 class _IntSpinnerState extends State<IntSpinner> {
   TextEditingController _controller;
   bool _validInput = true;
+
   int get _textAsInt => widget.textConverter.asInt(_controller.text);
 
   set _textAsInt(int value) {
@@ -63,21 +65,20 @@ class _IntSpinnerState extends State<IntSpinner> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(
-        text: widget.textConverter.asString(widget.initialValue));
+    _controller = TextEditingController();
     _controller.addListener(_onChanged);
-    if (widget.valueNotifier != null)
-      widget.valueNotifier.addListener(_updateValue);
+    widget.valueNotifier?.addListener(_updateValue);
+
+    _controller.text = widget.textConverter.asString(widget.initialValue);
   }
 
   void _onChanged() {
     String text = _controller.text.trim();
-    print(text);
     setState(() {
       var value = widget.textConverter.asInt(text);
-      print(value);
+
       _validInput = (value.toString() == text);
-      print(_validInput);
+
       if (_validInput) {
         _textAsInt = value;
         widget.onChanged(_textAsInt);
@@ -93,8 +94,7 @@ class _IntSpinnerState extends State<IntSpinner> {
   @override
   void dispose() {
     _controller.dispose();
-    if (widget.valueNotifier != null)
-      widget.valueNotifier.removeListener(_updateValue);
+    widget.valueNotifier?.removeListener(_updateValue);
     super.dispose();
   }
 
@@ -103,10 +103,12 @@ class _IntSpinnerState extends State<IntSpinner> {
     return Row(
       children: [
         DoubleLeftArrowButton(
+          key: ValueKey('$keyString-LEFT2'),
           onPressed: () => setState(() =>
               _textAsInt = widget.stepFunction(_textAsInt, -widget.bigStep)),
         ),
         LeftArrowButton(
+          key: ValueKey('$keyString-LEFT'),
           onPressed: () => setState(() =>
               _textAsInt = widget.stepFunction(_textAsInt, -widget.smallStep)),
         ),
@@ -117,10 +119,12 @@ class _IntSpinnerState extends State<IntSpinner> {
           ),
         ),
         RightArrowButton(
+          key: ValueKey('$keyString-RIGHT'),
           onPressed: () => setState(() =>
               _textAsInt = widget.stepFunction(_textAsInt, widget.smallStep)),
         ),
         DoubleRightArrowButton(
+          key: ValueKey('$keyString-RIGHT2'),
           onPressed: () => setState(() =>
               _textAsInt = widget.stepFunction(_textAsInt, widget.bigStep)),
         ),
@@ -128,12 +132,17 @@ class _IntSpinnerState extends State<IntSpinner> {
     );
   }
 
+  String get keyString => (widget.key is ValueKey)
+      ? (widget.key as ValueKey).value
+      : widget.key.toString();
+
   TextFormField _buildTextFormField() {
     TextInputFormatter formatter = (widget.minValue < 0)
         ? FilteringTextInputFormatter.allow(RegExp(r'[0-9\-]'))
         : FilteringTextInputFormatter.digitsOnly;
 
     return TextFormField(
+      key: ValueKey('$keyString-TEXT'),
       textAlign: TextAlign.right,
       controller: _controller,
       keyboardType: _keyboardType(),
@@ -145,9 +154,7 @@ class _IntSpinnerState extends State<IntSpinner> {
     );
   }
 
-  TextInputType _keyboardType() {
-    return widget.minValue < 0
-        ? TextInputType.numberWithOptions(signed: true)
-        : TextInputType.number;
-  }
+  TextInputType _keyboardType() => widget.minValue < 0
+      ? TextInputType.numberWithOptions(signed: true)
+      : TextInputType.number;
 }
