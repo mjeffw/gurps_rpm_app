@@ -56,8 +56,7 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
     var children2 = [
       ProviderSelectorTextField<CastingModel>(
         key: Key('__ritualname__'),
-        valueProvider: () =>
-            Provider.of<CastingModel>(context, listen: false).name,
+        valueProvider: (_, model) => (model as CastingModel).name,
         onSubmitted: _titleUpdated,
         style: textTheme.headline5,
         decoration: InputDecoration(
@@ -94,8 +93,7 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
         initiallyExpanded: false,
         children: [
           ProviderSelectorTextField<CastingModel>(
-            valueProvider: () =>
-                Provider.of<CastingModel>(context, listen: false).notes,
+            valueProvider: (context, model) => (model as CastingModel).notes,
             maxLines: 6,
             onSubmitted: _notesUpdated,
             style: textTheme.headline5,

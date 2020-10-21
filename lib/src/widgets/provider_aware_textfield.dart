@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-typedef StringGetter = String Function();
 typedef StringConsumer = void Function(String);
 
-class ProviderSelectorTextField<P> extends StatefulWidget {
+class ProviderSelectorTextField<P extends ChangeNotifier>
+    extends StatefulWidget {
   const ProviderSelectorTextField({
     Key key,
     @required this.valueProvider,
@@ -16,7 +16,7 @@ class ProviderSelectorTextField<P> extends StatefulWidget {
     this.maxLines = 1,
   }) : super(key: key);
 
-  final StringGetter valueProvider;
+  final String Function(BuildContext, ChangeNotifier) valueProvider;
   final ValueChanged<String> onSubmitted;
   final VoidCallback onEditingComplete;
   final bool autofocus;
@@ -25,47 +25,21 @@ class ProviderSelectorTextField<P> extends StatefulWidget {
   final int maxLines;
 
   @override
-  _ProviderSelectorTextFieldState createState() =>
-      _ProviderSelectorTextFieldState<P>(
-        valueProvider: valueProvider,
-        onSubmitted: onSubmitted,
-        onEditingComplete: onEditingComplete,
-        autofocus: autofocus,
-        style: style,
-        decoration: decoration,
-        maxLines: maxLines,
-      );
+  _ProviderSelectorTextFieldState<P> createState() =>
+      _ProviderSelectorTextFieldState<P>();
 }
 
-class _ProviderSelectorTextFieldState<P>
+class _ProviderSelectorTextFieldState<P extends ChangeNotifier>
     extends State<ProviderSelectorTextField> {
-  _ProviderSelectorTextFieldState({
-    this.valueProvider,
-    this.onSubmitted,
-    this.onEditingComplete,
-    this.autofocus = false,
-    this.style,
-    this.decoration = const InputDecoration(),
-    this.maxLines = 1,
-  });
-
   final _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-
-  final StringGetter valueProvider;
-  final ValueChanged<String> onSubmitted;
-  final VoidCallback onEditingComplete;
-  final bool autofocus;
-  final TextStyle style;
-  final InputDecoration decoration;
-  final int maxLines;
 
   @override
   void initState() {
     super.initState();
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
-        onSubmitted(_controller.text);
+        widget.onSubmitted(_controller.text);
       }
     });
   }
@@ -79,22 +53,27 @@ class _ProviderSelectorTextFieldState<P>
 
   Widget build(BuildContext context) {
     return Selector<P, String>(
-      selector: (_, model) => valueProvider(),
+      selector: (_, model) => widget.valueProvider(context, model),
       builder: (_, value, __) {
         if (_controller.text != value) {
           _controller.text = value ?? '';
         }
         return TextField(
+          key: Key('$_keyText-TEXT'),
           controller: _controller,
-          onSubmitted: onSubmitted,
-          onEditingComplete: onEditingComplete,
-          autofocus: autofocus,
-          style: style,
-          decoration: decoration,
+          onSubmitted: widget.onSubmitted,
+          onEditingComplete: widget.onEditingComplete,
+          autofocus: widget.autofocus,
+          style: widget.style,
+          decoration: widget.decoration,
           focusNode: _focusNode,
-          maxLines: maxLines,
+          maxLines: widget.maxLines,
         );
       },
     );
   }
+
+  String get _keyText => (widget.key is ValueKey)
+      ? (widget.key as ValueKey).value
+      : widget.key.toString();
 }
