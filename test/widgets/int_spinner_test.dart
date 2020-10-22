@@ -575,6 +575,9 @@ void main() {
                 key: ValueKey('IntSpinner'),
                 onChanged: (value) => x = value,
               ),
+              TextField(
+                key: Key('FOO'),
+              )
             ],
           ),
         ),
@@ -582,18 +585,25 @@ void main() {
 
       expect(x, equals(0));
 
-      // Enter valid text
+      // print('Enter valid text');
       await tester.enterText(find.byKey(ValueKey('IntSpinner-TEXT')), '-2200');
       expect(x, equals(-2200));
 
-      // Enter invalid text
+      // move the focus somewhere else ... anywhere else
+      await tester.showKeyboard(find.byKey(Key('FOO')));
+
+      TextField txt = tester.widget(find.byKey(ValueKey('IntSpinner-TEXT')));
+      expect(txt.decoration.errorText, isNull);
+
+      // print('Enter invalid text');
       await tester.enterText(find.byKey(ValueKey('IntSpinner-TEXT')), '2-200');
       expect(x, equals(-2200)); // unchanged!!
 
-      // TODO uncomment when i have a solution:
-      // https://stackoverflow.com/questions/64468890/flutter-widget-tests-cannot-find-inputdecoration-errortext
-      // TextField txt = tester.widget(find.byKey(ValueKey('IntSpinner-TEXT')));
-      // expect(txt.decoration.errorText, equals('Invalid input'));
+      // move the focus somewhere else ... anywhere else
+      await tester.showKeyboard(find.byKey(Key('FOO')));
+
+      txt = tester.widget(find.byKey(ValueKey('IntSpinner-TEXT')));
+      expect(txt.decoration.errorText, equals('Invalid input'));
     });
   });
 }

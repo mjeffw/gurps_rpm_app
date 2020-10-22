@@ -175,5 +175,63 @@ void main() {
       await tester.tap(find.byKey(ValueKey('DiceSpinner-LEFT')));
       expect(d, equals(DieRoll(dice: 2, adds: 1)));
     });
+
+    testWidgets('should allow manual entering of value',
+        (WidgetTester tester) async {
+      DieRoll d = DieRoll(dice: 3, adds: -1);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Card(
+          child: Column(
+            children: [
+              DiceSpinner(
+                key: ValueKey('DiceSpinner'),
+                initialValue: d,
+                onChanged: (value) => d = value,
+                smallStep: 2,
+              ),
+            ],
+          ),
+        ),
+      ));
+
+      await tester.enterText(find.byKey(ValueKey('DiceSpinner-TEXT')), '5d+2');
+      expect(d, equals(DieRoll(dice: 5, adds: 2)));
+
+      await tester.enterText(find.byKey(ValueKey('DiceSpinner-TEXT')), '4d');
+      expect(d, equals(DieRoll(dice: 4, adds: 0)));
+
+      await tester.enterText(find.byKey(ValueKey('DiceSpinner-TEXT')), '1d-3');
+      expect(d, equals(DieRoll(dice: 1, adds: -3)));
+    });
+
+    testWidgets('should flag invalid values', (WidgetTester tester) async {
+      DieRoll d = DieRoll(dice: 3, adds: -1);
+
+      await tester.pumpWidget(MaterialApp(
+        home: Card(
+          child: Column(
+            children: [
+              DiceSpinner(
+                key: ValueKey('DiceSpinner'),
+                initialValue: d,
+                onChanged: (value) => d = value,
+                smallStep: 2,
+              ),
+              TextField(
+                key: Key('FOO'),
+              )
+            ],
+          ),
+        ),
+      ));
+
+      await tester.enterText(find.byKey(Key('DiceSpinner-TEXT')), '5d+');
+      expect(d, equals(DieRoll(dice: 3, adds: -1))); // did not change
+      await tester.showKeyboard(find.byKey(Key('FOO')));
+
+      TextField txt = tester.widget(find.byKey(Key('DiceSpinner-TEXT')));
+      expect(txt.decoration.errorText, equals('No dice!'));
+    });
   });
 }

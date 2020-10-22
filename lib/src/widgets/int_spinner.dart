@@ -48,7 +48,6 @@ class IntSpinner extends StatefulWidget {
 class _IntSpinnerState extends State<IntSpinner> {
   TextEditingController _controller;
   bool _validInput = true;
-
   int get _textAsInt => widget.textConverter.asInt(_controller.text);
 
   set _textAsInt(int value) {
