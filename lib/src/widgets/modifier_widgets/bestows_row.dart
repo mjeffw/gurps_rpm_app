@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:gurps_rpm_app/src/widgets/modifier_widgets/editor_dialog.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/casting_model.dart';
-import '../utils.dart';
-import '../arrow_button.dart';
 import '../int_spinner.dart';
+import '../../utils/utils.dart';
 import 'modifier_row.dart';
 
 const rangeLabels = <BestowsRange, String>{
@@ -27,29 +25,14 @@ class BestowsRow extends ModifierRow {
   bool _isNegative() => _bestows.value.isNegative;
 
   @override
-  List<Widget> buildModifierRowWidgets(BuildContext context) {
-    return [
-      if (isMediumScreen(context))
-        LeftArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, _bestows.incrementEffect(-1)),
-        ),
-      Text('${_isNegative() ? '' : '+'}${_bestows.value}'),
-      if (isMediumScreen(context))
-        RightArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, _bestows.incrementEffect(1)),
-        ),
-      rowSmallSpacer,
-      Flexible(
-        fit: FlexFit.tight,
-        child: Text(
-          'to ${_bestows.roll} (${rangeLabels[_bestows.range]})',
-          overflow: TextOverflow.ellipsis,
-        ),
-      )
-    ];
-  }
+  String get detailText => null;
+
+  @override
+  String get effectText => '${_isNegative() ? '' : '+'}${_bestows.value}';
+
+  @override
+  String get suffixText =>
+      'to ${_bestows.roll} (${rangeLabels[_bestows.range]})';
 
   @override
   Widget dialogBuilder(BuildContext context) =>
@@ -87,73 +70,60 @@ class _EditorState extends State<_Editor> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-        actions: [
-          FlatButton(
-            child: const Text('CANCEL'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          FlatButton(
-            child: const Text('OK'),
-            onPressed: () {
-              var copy = widget.modifier.copyWith(
-                range: _range,
-                value: _bonus,
-                roll: _controller.text,
-              );
-              Navigator.of(context).pop<RitualModifier>(copy);
-            },
-          ),
-        ],
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Bestows a (Bonus or Penalty) Editor'),
-            Divider(),
-            columnSpacer,
-            TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                  labelText: 'Rolls affected',
-                  border: const OutlineInputBorder()),
+    return EditorDialog(
+      provider: () => widget.modifier.copyWith(
+        range: _range,
+        value: _bonus,
+        roll: _controller.text,
+      ),
+      name: widget.modifier.name,
+      widgets: _modifierWidgets(),
+    );
+  }
+
+  List<Widget> _modifierWidgets() {
+    return [
+      TextField(
+        controller: _controller,
+        decoration: InputDecoration(
+            labelText: 'Rolls affected', border: const OutlineInputBorder()),
+      ),
+      columnSpacer,
+      Container(
+        padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.0),
+          border: Border.all(color: Colors.grey),
+        ),
+        child: DropdownButton<BestowsRange>(
+          underline: Container(),
+          value: _range,
+          items: [
+            DropdownMenuItem(
+              child: Text('${rangeLabels[BestowsRange.broad]}'),
+              value: BestowsRange.broad,
             ),
-            columnSpacer,
-            Container(
-              padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.0),
-                border: Border.all(color: Colors.grey),
-              ),
-              child: DropdownButton<BestowsRange>(
-                underline: Container(),
-                value: _range,
-                items: [
-                  DropdownMenuItem(
-                    child: Text('${rangeLabels[BestowsRange.broad]}'),
-                    value: BestowsRange.broad,
-                  ),
-                  DropdownMenuItem(
-                    child: Text('${rangeLabels[BestowsRange.moderate]}'),
-                    value: BestowsRange.moderate,
-                  ),
-                  DropdownMenuItem(
-                    child: Text('${rangeLabels[BestowsRange.narrow]}'),
-                    value: BestowsRange.narrow,
-                  ),
-                ],
-                onChanged: (value) => setState(() => _range = value),
-              ),
+            DropdownMenuItem(
+              child: Text('${rangeLabels[BestowsRange.moderate]}'),
+              value: BestowsRange.moderate,
             ),
-            columnSpacer,
-            IntSpinner(
-              onChanged: (value) => setState(() => _bonus = value),
-              initialValue: _bonus,
-              textFieldWidth: 90.0,
-              decoration: InputDecoration(
-                labelText: 'Modifier',
-              ),
+            DropdownMenuItem(
+              child: Text('${rangeLabels[BestowsRange.narrow]}'),
+              value: BestowsRange.narrow,
             ),
           ],
-        ));
+          onChanged: (value) => setState(() => _range = value),
+        ),
+      ),
+      columnSpacer,
+      IntSpinner(
+        onChanged: (value) => setState(() => _bonus = value),
+        initialValue: _bonus,
+        textFieldWidth: 90.0,
+        decoration: InputDecoration(
+          labelText: 'Modifier',
+        ),
+      ),
+    ];
   }
 }

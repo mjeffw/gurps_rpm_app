@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_rpm_app/src/widgets/int_spinner.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/casting_model.dart';
-import '../arrow_button.dart';
-import '../utils.dart';
+import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class RangeDimensionalRow extends ModifierRow {
@@ -15,25 +12,14 @@ class RangeDimensionalRow extends ModifierRow {
   RangeDimensional get _range => super.modifier;
 
   @override
-  List<Widget> buildModifierRowWidgets(BuildContext context) {
-    return [
-      if (isMediumScreen(context))
-        LeftArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, _range.incrementEffect(-1)),
-        ),
-      Text('${_range.numberDimensions} dimensions'),
-      if (isMediumScreen(context))
-        RightArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, _range.incrementEffect(1)),
-        ),
-    ];
-  }
-
-  @override
   Widget dialogBuilder(BuildContext context) =>
       _Editor(modifier: _range, index: index);
+
+  @override
+  String get effectText => '${_range.numberDimensions}';
+
+  @override
+  String get suffixText => 'dimensions';
 }
 
 class _Editor extends StatefulWidget {
@@ -60,38 +46,22 @@ class __EditorState extends State<_Editor> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      actions: [
-        FlatButton(
-          child: const Text('CANCEL'),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        FlatButton(
-          child: const Text('OK'),
-          onPressed: () =>
-              Navigator.of(context).pop<RitualModifier>(_createModifier()),
-        ),
-      ],
-      content: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height - 100.0,
-          maxWidth: MediaQuery.of(context).size.width - 40.0,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('${widget.modifier.name} Editor'),
-            Divider(),
-            columnSpacer,
-            IntSpinner(
-              initialValue: _range,
-              minValue: 0,
-              textFieldWidth: 80.0,
-              onChanged: (value) => setState(() => _range = value),
-            )
-          ],
-        ),
-      ),
+    return EditorDialog(
+      provider: _createModifier,
+      name: widget.modifier.name,
+      widgets: _modifierWidgets(),
     );
+  }
+
+  List<Widget> _modifierWidgets() {
+    return [
+      IntSpinner(
+        initialValue: _range,
+        minValue: 0,
+        textFieldWidth: 80.0,
+        onChanged: (value) => setState(() => _range = value),
+        decoration: InputDecoration(labelText: 'Number Dimensions'),
+      )
+    ];
   }
 }

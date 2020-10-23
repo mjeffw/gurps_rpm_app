@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_dice/gurps_dice.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/casting_model.dart';
-import '../arrow_button.dart';
 import '../dice_spinner.dart';
-import '../utils.dart';
+import '../../utils/utils.dart';
+import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class HealingRow extends ModifierRow {
@@ -16,26 +14,14 @@ class HealingRow extends ModifierRow {
   Healing get _healing => super.modifier;
 
   @override
-  List<Widget> buildModifierRowWidgets(BuildContext context) {
-    return [
-      if (isMediumScreen(context))
-        LeftArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, _healing.incrementEffect(-1)),
-        ),
-      Text('${_healing.dice}'),
-      if (isMediumScreen(context))
-        RightArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, _healing.incrementEffect(1)),
-        ),
-      Text('${_healing.type == HealingType.fp ? 'FP' : 'HP'}'),
-    ];
-  }
-
-  @override
   Widget dialogBuilder(BuildContext context) =>
       _Editor(modifier: _healing, index: index);
+
+  @override
+  String get effectText => '${_healing.dice}';
+
+  @override
+  String get suffixText => '${_healing.type == HealingType.fp ? 'FP' : 'HP'}';
 }
 
 class _Editor extends StatefulWidget {
@@ -55,7 +41,6 @@ class __EditorState extends State<_Editor> {
   @override
   void initState() {
     super.initState();
-
     _dice = widget.modifier.dice;
     _type = widget.modifier.type;
   }
@@ -64,60 +49,46 @@ class __EditorState extends State<_Editor> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      actions: [
-        FlatButton(
-          child: const Text('CANCEL'),
-          onPressed: () => Navigator.of(context).pop(),
+    return EditorDialog(
+      provider: _createModifier,
+      name: widget.modifier.name,
+      widgets: _modifierWidgets(),
+    );
+  }
+
+  List<Widget> _modifierWidgets() {
+    return [
+      Text('${widget.modifier.name} Editor'),
+      Divider(),
+      columnSpacer,
+      DiceSpinner(
+        onChanged: (value) => setState(() => _dice = value),
+        initialValue: _dice,
+        textFieldWidth: 90.0,
+      ),
+      columnSpacer,
+      Container(
+        padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.0),
+          border: Border.all(color: Colors.grey),
         ),
-        FlatButton(
-          child: const Text('OK'),
-          onPressed: () =>
-              Navigator.of(context).pop<RitualModifier>(_createModifier()),
-        ),
-      ],
-      content: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height - 100.0,
-          maxWidth: MediaQuery.of(context).size.width - 40.0,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('${widget.modifier.name} Editor'),
-            Divider(),
-            columnSpacer,
-            DiceSpinner(
-              onChanged: (value) => setState(() => _dice = value),
-              initialValue: _dice,
-              textFieldWidth: 90.0,
+        child: DropdownButton<HealingType>(
+          underline: Container(),
+          value: _type,
+          items: [
+            DropdownMenuItem(
+              child: Text('Hit Points'),
+              value: HealingType.hp,
             ),
-            columnSpacer,
-            Container(
-              padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.0),
-                border: Border.all(color: Colors.grey),
-              ),
-              child: DropdownButton<HealingType>(
-                underline: Container(),
-                value: _type,
-                items: [
-                  DropdownMenuItem(
-                    child: Text('Hit Points'),
-                    value: HealingType.hp,
-                  ),
-                  DropdownMenuItem(
-                    child: Text('Fatigue'),
-                    value: HealingType.fp,
-                  ),
-                ],
-                onChanged: (value) => setState(() => _type = value),
-              ),
+            DropdownMenuItem(
+              child: Text('Fatigue'),
+              value: HealingType.fp,
             ),
           ],
+          onChanged: (value) => setState(() => _type = value),
         ),
       ),
-    );
+    ];
   }
 }

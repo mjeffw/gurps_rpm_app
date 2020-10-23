@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
 import 'delete_button.dart';
-import 'utils.dart';
+import '../utils/utils.dart';
 
 typedef OnEffectUpdated = void Function(int, SpellEffect, CastingModel);
 typedef OnEffectDeleted = void Function(int, CastingModel);
@@ -24,12 +24,66 @@ class SpellEffectEditor extends StatelessWidget {
   final OnEffectUpdated onEffectUpdated;
   final OnEffectDeleted onEffectDeleted;
 
+  String get _keyText =>
+      (key is ValueKey) ? (key as ValueKey).value : key.toString();
+
+  @override
+  Widget build(BuildContext context) {
+    final Color oddBackground = Theme.of(context).accentColor.withOpacity(0.05);
+
+    return Consumer<DeleteButtonVisible>(
+      builder: (_, deleteVisible, __) => Dismissible(
+        key: UniqueKey(),
+        background: Container(color: Colors.red),
+        onDismissed: (_) => _deleteAction(context),
+        child: Container(
+          color: (index.isOdd) ? oddBackground : null,
+          padding: EdgeInsets.only(right: 24.0),
+          child: Row(
+            children: [
+              DropdownButton(
+                key: Key('$_keyText-LEVEL'),
+                items: _levelItems(context),
+                onChanged: (value) {
+                  print('');
+                  var model = Provider.of<CastingModel>(context, listen: false);
+                  model.updateInherentSpellEffect(
+                      index, effect.withLevel(value));
+                },
+                value: effect.level,
+              ),
+              rowSpacer,
+              DropdownButton(
+                key: Key('$_keyText-EFFECT'),
+                items: _effectItems(context),
+                onChanged: (value) => Provider.of<CastingModel>(context,
+                        listen: false)
+                    .updateInherentSpellEffect(index, effect.withEffect(value)),
+                value: effect.effect,
+              ),
+              rowSpacer,
+              Text('${effect.path}'),
+              Spacer(),
+              if (deleteVisible.value && isMediumScreen(context))
+                DeleteButton(
+                  key: Key('$_keyText-DEL'),
+                  onPressed: () => _deleteAction(context),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Builds the list of "Levels" (Greater, Lesser) to populate the Levels dropdown menu.
   List<DropdownMenuItem> _levelItems(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return Level.labels
         .map(
           (it) => DropdownMenuItem<Level>(
+            key: Key('$_keyText-LEVEL[$it]'),
             value: Level.fromString(it),
             child: Text(it, style: textTheme.subtitle2),
           ),
@@ -37,12 +91,14 @@ class SpellEffectEditor extends StatelessWidget {
         .toList();
   }
 
+  /// Builds the list of "Effects" (Create, Destroy, ...) to populate the Levels dropdown menu.
   List<DropdownMenuItem> _effectItems(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
     return Effect.labels
         .map(
           (it) => DropdownMenuItem<Effect>(
+            key: Key('$_keyText-EFFECT[$it]'),
             value: Effect.fromString(it),
             child: Text(it, style: textTheme.subtitle2),
           ),
@@ -50,60 +106,10 @@ class SpellEffectEditor extends StatelessWidget {
         .toList();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    this.key.toString();
-    final Color oddBackground = Theme.of(context).accentColor.withOpacity(0.05);
-
-    return Consumer<DeleteButtonVisible>(
-      key: ValueKey<String>('${(key as ValueKey).value}:$index'),
-      builder: (_, deleteVisible, __) => IntrinsicHeight(
-        child: Dismissible(
-          key: ValueKey<String>('${(key as ValueKey).value}:$index'),
-          background: Container(color: Colors.red),
-          onDismissed: (_) => _deleteAction(context),
-          child: Container(
-            color: (index.isOdd) ? oddBackground : null,
-            padding: EdgeInsets.only(right: 24.0),
-            child: Row(
-              children: [
-                DropdownButton(
-                  items: _levelItems(context),
-                  onChanged: (value) => onEffectUpdated(
-                      index,
-                      effect.withLevel(value),
-                      Provider.of<CastingModel>(context, listen: false)),
-                  value: effect.level,
-                ),
-                rowSpacer,
-                DropdownButton(
-                  items: _effectItems(context),
-                  onChanged: (value) => onEffectUpdated(
-                      index,
-                      effect.withEffect(value),
-                      Provider.of<CastingModel>(context, listen: false)),
-                  value: effect.effect,
-                ),
-                rowSpacer,
-                Text('${effect.path}'),
-                Spacer(),
-                if (deleteVisible.value && isMediumScreen(context))
-                  DeleteButton(
-                    onPressed: () => _deleteAction(context),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   void _deleteAction(BuildContext context) {
-    onEffectDeleted(index, Provider.of<CastingModel>(context, listen: false));
-
-    Scaffold.of(context).showSnackBar(
-      SnackBar(content: Text('Effect "$effect" deleted')),
-    );
+    Provider.of<CastingModel>(context, listen: false)
+        .removeInherentSpellEffect(index);
+    Scaffold.of(context)
+        .showSnackBar(SnackBar(content: Text('Effect $effect deleted')));
   }
 }

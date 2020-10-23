@@ -31,8 +31,10 @@ class SpellEffectList extends StatelessWidget {
         title: 'Select Path:',
         items: _pathOptions,
         selectedItem: 'Body',
-        onChanged: (value) => Provider.of<CastingModel>(context, listen: false)
-            .addInherentSpellEffect(value));
+        onChanged: (value) {
+          var model = Provider.of<CastingModel>(context, listen: false);
+          model.addInherentSpellEffect(value);
+        });
   }
 
   @override
@@ -43,6 +45,7 @@ class SpellEffectList extends StatelessWidget {
         children: [
           Consumer<DeleteButtonVisible>(
             builder: (_, deleteVisible, __) => DynamicListHeader(
+              key: Key('InherentSpellEffectsHeader'),
               title: 'Spell Effects:',
               deleteActive: deleteVisible.value,
               onAddPressed: () => _addPath(context),
@@ -52,21 +55,13 @@ class SpellEffectList extends StatelessWidget {
           Selector<CastingModel, List<SpellEffect>>(
             selector: (_, model) => model.inherentSpellEffects,
             builder: (context, effects, child) {
-              List<Widget> widgets = [];
-              for (var index = 0; index < effects.length; index++) {
-                widgets.add(SpellEffectEditor(
-                  key: ValueKey<String>('InherentEffects'),
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: effects.length,
+                itemBuilder: (_, index) => SpellEffectEditor(
                   effect: effects[index],
                   index: index,
-                  onEffectDeleted: (index, model) {
-                    model.removeInherentSpellEffect(index);
-                  },
-                  onEffectUpdated: (index, effect, model) =>
-                      model.updateInherentSpellEffect(index, effect),
-                ));
-              }
-              return Column(
-                children: widgets,
+                ),
               );
             },
           ),

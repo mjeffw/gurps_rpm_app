@@ -4,14 +4,12 @@ import 'package:flutter_typeahead_web/flutter_typeahead.dart';
 import 'package:gurps_dart/gurps_dart.dart';
 import 'package:gurps_dice/gurps_dice.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/casting_model.dart';
-import '../arrow_button.dart';
 import '../delete_button.dart';
 import '../dice_spinner.dart';
 import '../dynamic_list_header.dart';
-import '../utils.dart';
+import '../../utils/utils.dart';
+import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class DamageRow extends ModifierRow {
@@ -22,45 +20,24 @@ class DamageRow extends ModifierRow {
   Damage get damage => super.modifier;
 
   @override
-  List<Widget> buildModifierRowWidgets(BuildContext context) {
-    return [
-      Text('${damage.direct ? 'Internal' : 'External'} ${damage.type.label},'),
-      if (isMediumScreen(context))
-        LeftArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, damage.incrementEffect(-1)),
-        ),
-      rowSmallSpacer,
-      Text('${damage.damageDice}'),
-      if (isMediumScreen(context))
-        RightArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, damage.incrementEffect(1)),
-        ),
-      rowSmallSpacer,
-      Flexible(
-        fit: FlexFit.tight,
-        child: Text(
-          _getEnhancerText(),
-          overflow: TextOverflow.ellipsis,
-        ),
-      )
-    ];
-  }
-
-  @override
   Widget dialogBuilder(BuildContext context) =>
       _Editor(modifier: modifier, index: index);
 
-  String _getEnhancerText() {
-    return (damage.modifiers.isEmpty)
-        ? ''
-        : '(' +
-            damage.modifiers
-                .map((it) => it.summaryText)
-                .reduce((a, b) => a + ', ' + b) +
-            ')';
-  }
+  @override
+  String get suffixText => (damage.modifiers.isEmpty)
+      ? ''
+      : '(' +
+          damage.modifiers
+              .map((it) => it.summaryText)
+              .reduce((a, b) => a + ', ' + b) +
+          ')';
+
+  @override
+  String get detailText =>
+      '${damage.direct ? 'Internal' : 'External'} ${damage.type.label},';
+
+  @override
+  String get effectText => '${damage.damageDice}';
 }
 
 class _Editor extends StatefulWidget {
@@ -83,7 +60,6 @@ class _EditorState extends State<_Editor> {
   @override
   void initState() {
     super.initState();
-
     _dice = widget.modifier.dice;
     _direct = widget.modifier.direct;
     _explosive = widget.modifier.explosive;
@@ -100,90 +76,71 @@ class _EditorState extends State<_Editor> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      actions: [
-        FlatButton(
-          child: const Text('CANCEL'),
-          onPressed: () => Navigator.of(context).pop(),
+    return EditorDialog(
+      provider: _createModifier,
+      name: widget.modifier.name,
+      widgets: _modifierWidgets(),
+    );
+  }
+
+  List<Widget> _modifierWidgets() {
+    return [
+      DiceSpinner(
+        onChanged: (value) => setState(() => _dice = value),
+        initialValue: _dice,
+        textFieldWidth: 90.0,
+      ),
+      columnSpacer,
+      Container(
+        padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.0),
+          border: Border.all(color: Colors.grey),
         ),
-        FlatButton(
-          child: const Text('OK'),
-          onPressed: () =>
-              Navigator.of(context).pop<RitualModifier>(_createModifier()),
-        ),
-      ],
-      content: ConstrainedBox(
-        constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height - 100.0,
-            maxWidth: MediaQuery.of(context).size.width - 40.0,
-            minWidth: 350.0,
-            minHeight: 400.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Damage Editor'),
-            Divider(),
-            columnSpacer,
-            DiceSpinner(
-              onChanged: (value) => setState(() => _dice = value),
-              initialValue: _dice,
-              textFieldWidth: 90.0,
-            ),
-            columnSpacer,
-            Container(
-              padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.0),
-                border: Border.all(color: Colors.grey),
-              ),
-              child: DropdownButton<DamageType>(
-                underline: Container(),
-                value: _type,
-                items: _damageTypeItems(),
-                onChanged: (value) => setState(() => _type = value),
-              ),
-            ),
-            columnSpacer,
-            SwitchListTile(
-              value: _direct,
-              onChanged: (state) => setState(() => _direct = state),
-              title:
-                  Text(_direct ? 'Internal (Direct)' : 'External (Indirect)'),
-            ),
-            if (!_direct) ...<Widget>[
-              columnSpacer,
-              CheckboxListTile(
-                value: _explosive,
-                onChanged: (state) => setState(() => _explosive = state),
-                title: Text('Explosive'),
-              ),
-            ],
-            columnSpacer,
-            DynamicListHeader(
-              title: 'Enhancements/Limitations',
-              onAddPressed: () => setState(() =>
-                  _modifiers.add(TraitModifier(name: 'Undefined', percent: 0))),
-            ),
-            Flexible(
-              fit: FlexFit.loose,
-              child:
-                  // ListView.builder(
-                  //   shrinkWrap: true,
-                  //   padding: EdgeInsets.all(0.0),
-                  //   scrollDirection: Axis.vertical,
-                  //   itemCount: _modifiers.length,
-                  //   itemBuilder: _itemBuilder,
-                  // ),
-                  SingleChildScrollView(
-                child: ListBody(
-                  children: _enhancementList(),
-                ),
-              ),
-            ),
-          ],
+        child: DropdownButton<DamageType>(
+          underline: Container(),
+          value: _type,
+          items: _damageTypeItems(),
+          onChanged: (value) => setState(() => _type = value),
         ),
       ),
-    );
+      columnSpacer,
+      SwitchListTile(
+        value: _direct,
+        onChanged: (state) => setState(() => _direct = state),
+        title: Text(_direct ? 'Internal (Direct)' : 'External (Indirect)'),
+      ),
+      if (!_direct) ...<Widget>[
+        columnSpacer,
+        CheckboxListTile(
+          value: _explosive,
+          onChanged: (state) => setState(() => _explosive = state),
+          title: Text('Explosive'),
+        ),
+      ],
+      columnSpacer,
+      DynamicListHeader(
+        title: 'Enhancements/Limitations',
+        onAddPressed: () => setState(
+            () => _modifiers.add(TraitModifier(name: 'Undefined', percent: 0))),
+      ),
+      Flexible(
+        fit: FlexFit.loose,
+        child:
+            // ListView.builder(
+            //   shrinkWrap: true,
+            //   padding: EdgeInsets.all(0.0),
+            //   scrollDirection: Axis.vertical,
+            //   itemCount: _modifiers.length,
+            //   itemBuilder: _itemBuilder,
+            // ),
+            SingleChildScrollView(
+          child: ListBody(
+            children: _enhancementList(),
+          ),
+        ),
+      ),
+    ];
   }
 
   // ignore: unused_element

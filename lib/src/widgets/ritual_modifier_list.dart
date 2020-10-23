@@ -24,7 +24,7 @@ import 'modifier_widgets/range_info_row.dart';
 import 'modifier_widgets/range_row.dart';
 import 'modifier_widgets/speed_row.dart';
 import 'modifier_widgets/subject_weight_row.dart';
-import 'utils.dart';
+import '../utils/utils.dart';
 
 typedef WidgetBuilder = Widget Function(RitualModifier, int);
 
@@ -79,12 +79,14 @@ class RitualModifierList extends StatelessWidget {
           Selector<CastingModel, List<RitualModifier>>(
             selector: (_, model) => model.inherentModifiers,
             builder: (context, modifiers, child) {
-              var widgets = <Widget>[];
-              for (var index = 0; index < modifiers.length; index++) {
-                widgets.add(RitualModifierLine(
-                    modifier: modifiers[index], index: index));
-              }
-              return Column(children: widgets);
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: modifiers.length,
+                itemBuilder: (_, index) => RitualModifierLine(
+                  modifier: modifiers[index],
+                  index: index,
+                ),
+              );
             },
           )
         ],
@@ -105,27 +107,23 @@ class RitualModifierLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color oddBackground = Theme.of(context).accentColor.withOpacity(0.05);
 
-    final widget = buildModifierEditor();
-
     return Consumer<DeleteButtonVisible>(
-      key: Key('RitualModifierLineWrapper:$index'),
-      builder: (_, deleteVisible, __) => IntrinsicHeight(
-        child: Dismissible(
-          key: Key('RitualModifierLine:$index'),
-          background: Container(color: Colors.red),
-          onDismissed: (direction) => _deleteAction(context),
-          child: Container(
-            color: (index.isOdd) ? oddBackground : null,
-            padding: EdgeInsets.only(right: 24.0),
-            child: Row(
-              children: [
-                widget,
-                if (deleteVisible.value && isMediumScreen(context))
-                  DeleteButton(
-                    onPressed: () => _deleteAction(context),
-                  ),
-              ],
-            ),
+      builder: (_, deleteVisible, __) => Dismissible(
+        direction: DismissDirection.endToStart,
+        key: UniqueKey(),
+        background: Container(color: Colors.red),
+        onDismissed: (direction) => _deleteAction(context),
+        child: Container(
+          color: (index.isOdd) ? oddBackground : null,
+          padding: EdgeInsets.only(right: 24.0),
+          child: Row(
+            children: [
+              buildModifierEditor(),
+              if (deleteVisible.value && isMediumScreen(context))
+                DeleteButton(
+                  onPressed: () => _deleteAction(context),
+                ),
+            ],
           ),
         ),
       ),

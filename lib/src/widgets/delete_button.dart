@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DeleteButton extends StatelessWidget {
-  const DeleteButton({this.onPressed});
+  const DeleteButton({Key key, this.onPressed}) : super(key: key);
 
   final VoidCallback onPressed;
 
@@ -10,7 +10,7 @@ class DeleteButton extends StatelessWidget {
     return IconButton(
         icon: Icon(
           Icons.remove_circle_rounded,
-          color: Colors.red,
+          color: Colors.deepOrange,
         ),
         onPressed: onPressed);
   }

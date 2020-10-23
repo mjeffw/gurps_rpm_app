@@ -17,6 +17,6 @@ abstract class StringToIntConverter implements Converter<String, int> {
 class IdentityStringToIntConverter extends StringToIntConverter {
   const IdentityStringToIntConverter();
 
-  int toB(String input) => int.parse(input);
+  int toB(String input) => int.tryParse(input);
   String toA(int input) => input.toString();
 }

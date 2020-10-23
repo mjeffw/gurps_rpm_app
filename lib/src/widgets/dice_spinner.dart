@@ -15,7 +15,7 @@ class DiceSpinner extends StatefulWidget {
   const DiceSpinner({
     Key key,
     @required this.onChanged,
-    this.initialValue = const DieRoll(),
+    this.initialValue = const DieRoll(dice: 1),
     this.bigStep = 4,
     this.smallStep = 1,
     this.decoration = const InputDecoration(),
@@ -53,8 +53,9 @@ class _DiceSpinnerState extends State<DiceSpinner> {
   void initState() {
     super.initState();
 
-    _controller = TextEditingController(text: widget.initialValue.toString());
+    _controller = TextEditingController();
     _controller.addListener(_onChanged);
+    _controller.text = widget.initialValue.toString();
   }
 
   void _onChanged() {
@@ -81,11 +82,13 @@ class _DiceSpinnerState extends State<DiceSpinner> {
     return Row(
       children: [
         DoubleLeftArrowButton(
+          key: ValueKey('$_keyValue-LEFT2'),
           onPressed: () => setState(() {
             _textAsDice = _textAsDice - widget.bigStep;
           }),
         ),
         LeftArrowButton(
+          key: ValueKey('$_keyValue-LEFT'),
           onPressed: () => setState(() {
             _textAsDice = _textAsDice - widget.smallStep;
           }),
@@ -97,11 +100,13 @@ class _DiceSpinnerState extends State<DiceSpinner> {
           ),
         ),
         RightArrowButton(
+          key: ValueKey('$_keyValue-RIGHT'),
           onPressed: () => setState(() {
             _textAsDice = _textAsDice + widget.smallStep;
           }),
         ),
         DoubleRightArrowButton(
+          key: ValueKey('$_keyValue-RIGHT2'),
           onPressed: () => setState(() {
             _textAsDice = _textAsDice + widget.bigStep;
           }),
@@ -110,8 +115,13 @@ class _DiceSpinnerState extends State<DiceSpinner> {
     );
   }
 
+  String get _keyValue => (widget.key is ValueKey)
+      ? (widget.key as ValueKey).value
+      : widget.key.toString();
+
   TextField _buildTextField() {
     return TextField(
+      key: ValueKey('$_keyValue-TEXT'),
       textAlign: TextAlign.right,
       controller: _controller,
       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9d+-]'))],

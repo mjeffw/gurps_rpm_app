@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gurps_rpm_app/src/widgets/int_spinner.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
-import 'package:provider/provider.dart';
 
-import '../../models/casting_model.dart';
-import '../arrow_button.dart';
-import '../utils.dart';
+import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class MetaMagicRow extends ModifierRow {
@@ -14,25 +12,11 @@ class MetaMagicRow extends ModifierRow {
   MetaMagic get _energy => super.modifier;
 
   @override
-  List<Widget> buildModifierRowWidgets(BuildContext context) {
-    return [
-      if (isMediumScreen(context))
-        LeftArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, _energy.incrementEffect(-1)),
-        ),
-      Text('${_energy.energy} energy'),
-      if (isMediumScreen(context))
-        RightArrowButton(
-          onPressed: () => Provider.of<CastingModel>(context, listen: false)
-              .updateInherentModifier(index, _energy.incrementEffect(1)),
-        ),
-    ];
-  }
-
-  @override
   Widget dialogBuilder(BuildContext context) =>
       _Editor(modifier: modifier, index: index);
+
+  @override
+  String get effectText => '${_energy.energy}';
 }
 
 class _Editor extends StatefulWidget {
@@ -46,72 +30,42 @@ class _Editor extends StatefulWidget {
 }
 
 class __EditorState extends State<_Editor> {
-  MetaMagic _metaMagic;
+  TextEditingController _controller;
+  int _energy;
 
   @override
   void initState() {
     super.initState();
-
-    _metaMagic = widget.modifier;
+    _energy = widget.modifier.energy;
+    _controller = TextEditingController(text: _energy.toString());
   }
 
-  MetaMagic _createModifier() => _metaMagic;
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  MetaMagic _createModifier() => widget.modifier.copyWith(energy: _energy);
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      actions: [
-        FlatButton(
-          child: const Text('CANCEL'),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        FlatButton(
-          child: const Text('OK'),
-          onPressed: () =>
-              Navigator.of(context).pop<RitualModifier>(_createModifier()),
-        ),
-      ],
-      content: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height - 100.0,
-          maxWidth: MediaQuery.of(context).size.width - 40.0,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('${widget.modifier.name} Editor'),
-            Divider(),
-            columnSpacer,
-            Row(
-              children: [
-                DoubleLeftArrowButton(
-                  onPressed: () => setState(() {
-                    _metaMagic = _metaMagic.incrementEffect(-5);
-                  }),
-                ),
-                LeftArrowButton(
-                  onPressed: () => setState(() {
-                    _metaMagic = _metaMagic.incrementEffect(-1);
-                  }),
-                ),
-                Expanded(
-                  child: Center(child: Text(_metaMagic.energy.toString())),
-                ),
-                RightArrowButton(
-                  onPressed: () => setState(() {
-                    _metaMagic = _metaMagic.incrementEffect(1);
-                  }),
-                ),
-                DoubleRightArrowButton(
-                  onPressed: () => setState(() {
-                    _metaMagic = _metaMagic.incrementEffect(5);
-                  }),
-                ),
-              ],
-            )
-          ],
+    return EditorDialog(
+      provider: _createModifier,
+      name: widget.modifier.name,
+      widgets: _modifierWidgets(),
+    );
+  }
+
+  List<Widget> _modifierWidgets() {
+    return [
+      IntSpinner(
+        onChanged: (value) => setState(() => _energy = value),
+        initialValue: _energy,
+        textFieldWidth: 90.0,
+        decoration: InputDecoration(
+          labelText: 'Energy',
         ),
       ),
-    );
+    ];
   }
 }
