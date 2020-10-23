@@ -107,6 +107,7 @@ class SpellEffectEditor extends StatelessWidget {
   }
 
   void _deleteAction(BuildContext context) {
+    print('delete');
     Provider.of<CastingModel>(context, listen: false)
         .removeInherentSpellEffect(index);
     Scaffold.of(context)

@@ -176,17 +176,21 @@ void main() {
             ChangeNotifierProvider(create: (_) => model)
           ],
           builder: (context, _) => MaterialApp(
-            home: Card(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: SpellEffectEditor(
-                      key: Key('Editor'),
-                      effect: model.inherentSpellEffects[0],
-                      index: 0,
+            home: Scaffold(
+              body: Card(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SpellEffectEditor(
+                        key: Key('Editor'),
+                        effect: model.inherentSpellEffects[0],
+                        index: 0,
+                        onEffectDeleted: (int, model) {},
+                        onEffectUpdated: (int, effect, model) {},
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -194,6 +198,47 @@ void main() {
       );
 
       expect(find.byKey(Key('Editor-DEL')), findsOneWidget);
+    });
+
+    testWidgets('should delete spelleffect', (WidgetTester tester) async {
+      Ritual ritual = Ritual().addSpellEffect(SpellEffect(Path.body));
+      CastingModel model = CastingModel(casting: Casting(ritual));
+      DeleteButtonVisible visible = DeleteButtonVisible();
+      visible.value = true;
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => visible),
+            ChangeNotifierProvider(create: (_) => model)
+          ],
+          builder: (context, _) => MaterialApp(
+            home: Scaffold(
+              body: Card(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SpellEffectEditor(
+                        key: Key('Editor'),
+                        effect: model.inherentSpellEffects[0],
+                        index: 0,
+                        onEffectDeleted: (int, model) {},
+                        onEffectUpdated: (int, effect, model) {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(model.inherentSpellEffects.length, equals(1));
+
+      await tester.tap(find.byKey(Key('Editor-DEL')));
+
+      expect(model.inherentSpellEffects, isEmpty);
     });
   });
 }
