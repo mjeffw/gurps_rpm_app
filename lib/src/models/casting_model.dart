@@ -4,22 +4,24 @@ import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'ritual_factory.dart';
 
 class CastingModel with ChangeNotifier {
-  Casting _casting = Casting(Ritual());
+  CastingModel({this.casting = const Casting(Ritual())});
 
-  Ritual get _ritual => _casting.ritual;
+  Casting casting = Casting(Ritual());
+
+  Ritual get _ritual => casting.ritual;
 
   void _updateRitual(Ritual updated) {
     if (updated != _ritual) {
-      _casting = _casting.copyWith(ritual: updated);
+      casting = casting.copyWith(ritual: updated);
       notifyListeners();
     }
   }
 
-  String get name => _casting.ritual.name;
+  String get name => casting.ritual.name;
 
   set name(String name) => _updateRitual(_ritual.copyWith(name: name));
 
-  String get notes => _casting.ritual.notes;
+  String get notes => casting.ritual.notes;
 
   set notes(String notes) => _updateRitual(_ritual.copyWith(notes: notes));
 
@@ -29,7 +31,7 @@ class CastingModel with ChangeNotifier {
 
   // == Inherent SpellEffect mutators ==
 
-  List<SpellEffect> get inherentSpellEffects => _casting.ritual.effects;
+  List<SpellEffect> get inherentSpellEffects => casting.ritual.effects;
 
   void addInherentSpellEffect(String pathName) => _updateRitual(
       _ritual.addSpellEffect(SpellEffect(Path.fromString(pathName),

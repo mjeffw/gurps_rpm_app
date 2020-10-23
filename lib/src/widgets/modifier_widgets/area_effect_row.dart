@@ -84,9 +84,6 @@ class _EditorState extends State<_Editor> {
                   excludes: _excludes)
               .incrementEffect(increment)
               .radius;
-          //   int value = AreaOfEffect.radiusToStep(currentRadius);
-          //   value += increment;
-          //   return (value <= 0) ? 0 : AreaOfEffect.stepToRadius(value);
         },
       ),
       columnSpacer,

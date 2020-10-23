@@ -17,6 +17,9 @@ class SpellEffectEditor extends StatelessWidget {
   final SpellEffect effect;
   final int index;
 
+  String get _keyText =>
+      (key is ValueKey) ? (key as ValueKey).value : key.toString();
+
   @override
   Widget build(BuildContext context) {
     final Color oddBackground = Theme.of(context).accentColor.withOpacity(0.05);
@@ -32,10 +35,14 @@ class SpellEffectEditor extends StatelessWidget {
           child: Row(
             children: [
               DropdownButton(
+                key: Key('$_keyText-LEVEL'),
                 items: _levelItems(context),
-                onChanged: (value) => Provider.of<CastingModel>(context,
-                        listen: false)
-                    .updateInherentSpellEffect(index, effect.withLevel(value)),
+                onChanged: (value) {
+                  print('');
+                  Provider.of<CastingModel>(context, listen: false)
+                      .updateInherentSpellEffect(
+                          index, effect.withLevel(value));
+                },
                 value: effect.level,
               ),
               rowSpacer,
@@ -67,6 +74,7 @@ class SpellEffectEditor extends StatelessWidget {
     return Level.labels
         .map(
           (it) => DropdownMenuItem<Level>(
+            key: Key('$_keyText-LEVEL[$it]'),
             value: Level.fromString(it),
             child: Text(it, style: textTheme.subtitle2),
           ),
