@@ -78,7 +78,7 @@ void main() {
           equals(Level.lesser));
 
       await tester.tap(finder);
-      await teste*r.tap(find.byKey(Key('Editor-LEVEL[Greater]')));
+      await tester.tap(find.byKey(Key('Editor-LEVEL[Greater]')));
       await tester.pump();
       expect((tester.widget(finder) as DropdownButton).value,
           equals(Level.greater));

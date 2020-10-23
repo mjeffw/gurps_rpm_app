@@ -41,16 +41,4 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 test/.test_coverage.dart
-coverage/amber.png
-coverage/emerald.png
-coverage/gcov.css
-coverage/glass.png
-coverage/index-sort-f.html
-coverage/index-sort-l.html
-coverage/index.html
-coverage/ruby.png
-coverage/snow.png
-coverage/updown.png
-coverage/widgets/
-coverage/utils/
-coverage/models/
+coverage/
