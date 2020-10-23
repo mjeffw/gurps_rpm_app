@@ -54,10 +54,20 @@ class SpellEffectList extends StatelessWidget {
             builder: (context, effects, child) {
               List<Widget> widgets = [];
               for (var index = 0; index < effects.length; index++) {
-                widgets.add(
-                    SpellEffectEditor(effect: effects[index], index: index));
+                widgets.add(SpellEffectEditor(
+                  key: ValueKey<String>('InherentEffects'),
+                  effect: effects[index],
+                  index: index,
+                  onEffectDeleted: (index, model) {
+                    model.removeInherentSpellEffect(index);
+                  },
+                  onEffectUpdated: (index, effect, model) =>
+                      model.updateInherentSpellEffect(index, effect),
+                ));
               }
-              return Column(children: widgets);
+              return Column(
+                children: widgets,
+              );
             },
           ),
         ],
