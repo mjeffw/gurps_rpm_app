@@ -39,14 +39,15 @@ class SpellEffectEditor extends StatelessWidget {
                 items: _levelItems(context),
                 onChanged: (value) {
                   print('');
-                  Provider.of<CastingModel>(context, listen: false)
-                      .updateInherentSpellEffect(
-                          index, effect.withLevel(value));
+                  var model = Provider.of<CastingModel>(context, listen: false);
+                  model.updateInherentSpellEffect(
+                      index, effect.withLevel(value));
                 },
                 value: effect.level,
               ),
               rowSpacer,
               DropdownButton(
+                key: Key('$_keyText-EFFECT'),
                 items: _effectItems(context),
                 onChanged: (value) => Provider.of<CastingModel>(context,
                         listen: false)
@@ -58,6 +59,7 @@ class SpellEffectEditor extends StatelessWidget {
               Spacer(),
               if (deleteVisible.value && isMediumScreen(context))
                 DeleteButton(
+                  key: Key('$_keyText-DEL'),
                   onPressed: () => _deleteAction(context),
                 ),
             ],
@@ -89,6 +91,7 @@ class SpellEffectEditor extends StatelessWidget {
     return Effect.labels
         .map(
           (it) => DropdownMenuItem<Effect>(
+            key: Key('$_keyText-EFFECT[$it]'),
             value: Effect.fromString(it),
             child: Text(it, style: textTheme.subtitle2),
           ),

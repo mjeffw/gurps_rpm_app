@@ -45,6 +45,7 @@ class SpellEffectList extends StatelessWidget {
         children: [
           Consumer<DeleteButtonVisible>(
             builder: (_, deleteVisible, __) => DynamicListHeader(
+              key: Key('InherentSpellEffectsHeader'),
               title: 'Spell Effects:',
               deleteActive: deleteVisible.value,
               onAddPressed: () => _addPath(context),
@@ -57,7 +58,7 @@ class SpellEffectList extends StatelessWidget {
               return ListView.builder(
                 shrinkWrap: true,
                 itemCount: effects.length,
-                itemBuilder: (_, index) => SpellEffectEditor(
+                itemBuilder: (_, index) => SpellEffectEditor(                  
                   effect: effects[index],
                   index: index,
                 ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DeleteButton extends StatelessWidget {
-  const DeleteButton({this.onPressed});
+  const DeleteButton({Key key, this.onPressed}) : super(key: key);
 
   final VoidCallback onPressed;
 

@@ -46,14 +46,15 @@ void main() {
 
     testWidgets('should update Level', (WidgetTester tester) async {
       Ritual ritual = Ritual();
-      ritual = ritual.addSpellEffect(SpellEffect(Path.body));
+      ritual =
+          ritual.addSpellEffect(SpellEffect(Path.body, level: Level.lesser));
+      CastingModel model = CastingModel(casting: Casting(ritual));
 
       await tester.pumpWidget(
         MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => DeleteButtonVisible()),
-            ChangeNotifierProvider(
-                create: (_) => CastingModel(casting: Casting(ritual))),
+            ChangeNotifierProvider(create: (_) => model)
           ],
           builder: (context, _) => MaterialApp(
             home: Card(
@@ -62,7 +63,7 @@ void main() {
                   Expanded(
                     child: SpellEffectEditor(
                       key: Key('Editor'),
-                      effect: ritual.effects[0],
+                      effect: model.inherentSpellEffects[0],
                       index: 0,
                     ),
                   ),
@@ -73,67 +74,126 @@ void main() {
         ),
       );
 
-      var finder = find.byKey(Key('Editor-LEVEL'));
-      expect((tester.widget(finder) as DropdownButton).value,
+      var dropdown = find.byKey(Key('Editor-LEVEL'));
+
+      expect((tester.widget(dropdown) as DropdownButton).value,
           equals(Level.lesser));
 
-      await tester.tap(finder);
-      await tester.tap(find.byKey(Key('Editor-LEVEL[Greater]')));
+      await tester.tap(dropdown);
       await tester.pump();
-      expect((tester.widget(finder) as DropdownButton).value,
-          equals(Level.greater));
-    }, skip: true);
-  });
+      await tester.pump(const Duration(seconds: 1));
 
-  group('description', () {
-    Key lesser = Key('LESSER');
-    Key greater = Key('GREATER');
-    Key level = Key('LEVEL');
+      await tester.tap(find.byKey(Key('Editor-LEVEL[Greater]')).last);
 
-    testWidgets('description', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Card(
-          child: Column(
-            children: [
-              Expanded(
-                child: DropdownButton(
-                  key: level,
-                  items: [
-                    DropdownMenuItem<String>(
-                      key: greater,
-                      value: 'Greater',
-                      child: Text('Greater'),
+      expect(model.inherentSpellEffects[0].level, equals(Level.greater));
+    });
+
+    testWidgets('should update Effect', (WidgetTester tester) async {
+      Ritual ritual = Ritual();
+      ritual =
+          ritual.addSpellEffect(SpellEffect(Path.body, effect: Effect.control));
+      CastingModel model = CastingModel(casting: Casting(ritual));
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => DeleteButtonVisible()),
+            ChangeNotifierProvider(create: (_) => model)
+          ],
+          builder: (context, _) => MaterialApp(
+            home: Card(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SpellEffectEditor(
+                      key: Key('Editor'),
+                      effect: model.inherentSpellEffects[0],
+                      index: 0,
                     ),
-                    DropdownMenuItem<String>(
-                      key: lesser,
-                      value: 'Lesser',
-                      child: Text('Lesser'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    print('$value');
-                  },
-                  value: 'Lesser',
-                ),
-              )
-            ],
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
-      ));
+      );
 
-      expect((tester.widget(find.byKey(level)) as DropdownButton).value,
-          equals('Lesser'));
+      var dropdown = find.byKey(Key('Editor-EFFECT'));
 
-      await tester.tap(find.byKey(level));
+      expect((tester.widget(dropdown) as DropdownButton).value,
+          equals(Effect.control));
 
-      DropdownMenuItem item = tester.widget(find.byKey(greater));
-      expect(item, isNotNull);
+      await tester.tap(dropdown);
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
 
-      await tester.tap(find.byKey(greater));
-      await tester.pumpAndSettle();
-      await expectLater(
-          (tester.widget(find.byKey(level)) as DropdownButton).value,
-          equals('Greater'));
-    }, skip: true);
+      await tester.tap(find.byKey(Key('Editor-EFFECT[Transform]')).last);
+
+      expect(model.inherentSpellEffects[0].effect, equals(Effect.transform));
+    });
+
+    testWidgets('should hide delete button', (WidgetTester tester) async {
+      Ritual ritual = Ritual().addSpellEffect(SpellEffect(Path.body));
+      CastingModel model = CastingModel(casting: Casting(ritual));
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => DeleteButtonVisible()),
+            ChangeNotifierProvider(create: (_) => model)
+          ],
+          builder: (context, _) => MaterialApp(
+            home: Card(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SpellEffectEditor(
+                      key: Key('Editor'),
+                      effect: model.inherentSpellEffects[0],
+                      index: 0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byKey(Key('Editor-DEL')), findsNothing);
+    });
+
+    testWidgets('should show delete button', (WidgetTester tester) async {
+      Ritual ritual = Ritual().addSpellEffect(SpellEffect(Path.body));
+      CastingModel model = CastingModel(casting: Casting(ritual));
+      DeleteButtonVisible visible = DeleteButtonVisible();
+      visible.value = true;
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => visible),
+            ChangeNotifierProvider(create: (_) => model)
+          ],
+          builder: (context, _) => MaterialApp(
+            home: Card(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SpellEffectEditor(
+                      key: Key('Editor'),
+                      effect: model.inherentSpellEffects[0],
+                      index: 0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byKey(Key('Editor-DEL')), findsOneWidget);
+    });
   });
 }
