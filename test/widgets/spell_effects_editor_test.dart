@@ -240,5 +240,47 @@ void main() {
 
       expect(model.inherentSpellEffects, isEmpty);
     });
+
+    testWidgets('should swipe to delete', (WidgetTester tester) async {
+      Ritual ritual = Ritual().addSpellEffect(SpellEffect(Path.body));
+      CastingModel model = CastingModel(casting: Casting(ritual));
+      DeleteButtonVisible visible = DeleteButtonVisible();
+      visible.value = true;
+
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => visible),
+            ChangeNotifierProvider(create: (_) => model)
+          ],
+          builder: (context, _) => MaterialApp(
+            home: Scaffold(
+              body: Card(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SpellEffectEditor(
+                        key: Key('Editor'),
+                        effect: model.inherentSpellEffects[0],
+                        index: 0,
+                        onEffectDeleted: (int, model) {},
+                        onEffectUpdated: (int, effect, model) {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(model.inherentSpellEffects.length, equals(1));
+
+      await tester.drag(find.byKey(Key('Editor-DEL')), Offset(500.0, 0.0));
+      await tester.pumpAndSettle();
+
+      expect(model.inherentSpellEffects, isEmpty);
+    });
   });
 }
