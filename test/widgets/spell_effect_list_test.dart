@@ -21,7 +21,7 @@ void main() {
                 children: [
                   Expanded(
                     child: SpellEffectList(
-                      key: Key('SpellEffectList'),
+                      key: Key('SpellEffects'),
                     ),
                   ),
                 ],
@@ -31,9 +31,9 @@ void main() {
         ),
       );
 
-      expect(find.byKey(Key('SpellEffectList')), findsOneWidget);
+      expect(find.byKey(Key('SpellEffects-HEADER')), findsOneWidget);
+      expect(find.byKey(Key('SpellEffects-LIST')), findsOneWidget);
       await tester.pump();
-      expect(find.byKey(Key('InherentSpellEffectsHeader')), findsOneWidget);
       expect(find.byElementType(SpellEffectEditor), findsNothing);
     });
   });

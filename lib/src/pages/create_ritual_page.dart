@@ -64,8 +64,8 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
           border: const OutlineInputBorder(),
         ),
       ),
-      SpellEffectList(),
-      RitualModifierList(),
+      SpellEffectList(key: Key('InherentSpellEffects')),
+      RitualModifierList(key: Key("InherentModifiers")),
       IntrinsicHeight(
         child: Row(
           children: [

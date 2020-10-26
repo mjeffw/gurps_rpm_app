@@ -32,6 +32,8 @@ void main() {
                         level: Level.greater,
                       ),
                       index: 0,
+                      onEffectDeleted: (index, model) {},
+                      onEffectUpdated: (index, effect, model) {},
                     ),
                   ),
                 ],
@@ -65,6 +67,9 @@ void main() {
                       key: Key('Editor'),
                       effect: model.inherentSpellEffects[0],
                       index: 0,
+                      onEffectDeleted: (index, model) {},
+                      onEffectUpdated: (index, effect, model) =>
+                          model.updateInherentSpellEffect(index, effect),
                     ),
                   ),
                 ],
@@ -109,6 +114,9 @@ void main() {
                       key: Key('Editor'),
                       effect: model.inherentSpellEffects[0],
                       index: 0,
+                      onEffectDeleted: (index, model) {},
+                      onEffectUpdated: (index, effect, model) =>
+                          model.updateInherentSpellEffect(index, effect),
                     ),
                   ),
                 ],
@@ -151,6 +159,8 @@ void main() {
                       key: Key('Editor'),
                       effect: model.inherentSpellEffects[0],
                       index: 0,
+                      onEffectDeleted: (index, model) {},
+                      onEffectUpdated: (index, effect, model) {},
                     ),
                   ),
                 ],
@@ -214,19 +224,27 @@ void main() {
           ],
           builder: (context, _) => MaterialApp(
             home: Scaffold(
-              body: Card(
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SpellEffectEditor(
-                        key: Key('Editor'),
-                        effect: model.inherentSpellEffects[0],
-                        index: 0,
-                        onEffectDeleted: (int, model) {},
-                        onEffectUpdated: (int, effect, model) {},
+              body: Builder(
+                builder: (context) => Card(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SpellEffectEditor(
+                          key: Key('Editor'),
+                          effect: model.inherentSpellEffects[0],
+                          index: 0,
+                          onEffectDeleted: (index, model) {
+                            SpellEffect effect =
+                                model.inherentSpellEffects[index];
+                            model.removeInherentSpellEffect(index);
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                                content: Text('Effect $effect deleted')));
+                          },
+                          onEffectUpdated: (int, effect, model) {},
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

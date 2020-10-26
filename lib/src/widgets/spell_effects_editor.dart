@@ -44,21 +44,22 @@ class SpellEffectEditor extends StatelessWidget {
               DropdownButton(
                 key: Key('$_keyText-LEVEL'),
                 items: _levelItems(context),
-                onChanged: (value) {
-                  print('');
-                  var model = Provider.of<CastingModel>(context, listen: false);
-                  model.updateInherentSpellEffect(
-                      index, effect.withLevel(value));
-                },
+                onChanged: (value) => onEffectUpdated(
+                  index,
+                  effect.withLevel(value),
+                  _model(context),
+                ),
                 value: effect.level,
               ),
               rowSpacer,
               DropdownButton(
                 key: Key('$_keyText-EFFECT'),
                 items: _effectItems(context),
-                onChanged: (value) => Provider.of<CastingModel>(context,
-                        listen: false)
-                    .updateInherentSpellEffect(index, effect.withEffect(value)),
+                onChanged: (value) => onEffectUpdated(
+                  index,
+                  effect.withEffect(value),
+                  _model(context),
+                ),
                 value: effect.effect,
               ),
               rowSpacer,
@@ -67,7 +68,10 @@ class SpellEffectEditor extends StatelessWidget {
               if (deleteVisible.value && isMediumScreen(context))
                 DeleteButton(
                   key: Key('$_keyText-DEL'),
-                  onPressed: () => _deleteAction(context),
+                  onPressed: () => onEffectDeleted(
+                    index,
+                    _model(context),
+                  ),
                 ),
             ],
           ),
@@ -75,6 +79,9 @@ class SpellEffectEditor extends StatelessWidget {
       ),
     );
   }
+
+  CastingModel _model(BuildContext context) =>
+      Provider.of<CastingModel>(context, listen: false);
 
   /// Builds the list of "Levels" (Greater, Lesser) to populate the Levels dropdown menu.
   List<DropdownMenuItem> _levelItems(BuildContext context) {
@@ -107,7 +114,6 @@ class SpellEffectEditor extends StatelessWidget {
   }
 
   void _deleteAction(BuildContext context) {
-    print('delete');
     Provider.of<CastingModel>(context, listen: false)
         .removeInherentSpellEffect(index);
     Scaffold.of(context)

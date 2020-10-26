@@ -37,6 +37,9 @@ class SpellEffectList extends StatelessWidget {
         });
   }
 
+  String get _keyText =>
+      (key is ValueKey) ? (key as ValueKey).value : key.toString();
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -45,7 +48,7 @@ class SpellEffectList extends StatelessWidget {
         children: [
           Consumer<DeleteButtonVisible>(
             builder: (_, deleteVisible, __) => DynamicListHeader(
-              key: Key('InherentSpellEffectsHeader'),
+              key: Key('$_keyText-HEADER'),
               title: 'Spell Effects:',
               deleteActive: deleteVisible.value,
               onAddPressed: () => _addPath(context),
@@ -56,11 +59,17 @@ class SpellEffectList extends StatelessWidget {
             selector: (_, model) => model.inherentSpellEffects,
             builder: (context, effects, child) {
               return ListView.builder(
+                key: Key('$_keyText-LIST'),
                 shrinkWrap: true,
                 itemCount: effects.length,
                 itemBuilder: (_, index) => SpellEffectEditor(
+                  key: UniqueKey(),
                   effect: effects[index],
                   index: index,
+                  onEffectDeleted: (index, model) =>
+                      _deleteAction(index, model, context),
+                  onEffectUpdated: (index, effect, model) =>
+                      model.updateInherentSpellEffect(index, effect),
                 ),
               );
             },
@@ -68,5 +77,12 @@ class SpellEffectList extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _deleteAction(int index, CastingModel model, BuildContext context) {
+    SpellEffect effect = model.inherentSpellEffects[index];
+    model.removeInherentSpellEffect(index);
+    Scaffold.of(context)
+        .showSnackBar(SnackBar(content: Text('Effect $effect deleted')));
   }
 }
