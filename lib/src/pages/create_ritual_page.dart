@@ -64,8 +64,22 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
           border: const OutlineInputBorder(),
         ),
       ),
-      SpellEffectList(key: Key('InherentSpellEffects')),
-      RitualModifierList(key: Key("InherentModifiers")),
+      SpellEffectList(
+        key: Key('InherentSpellEffects'),
+        onEffectDeleted: (index, model) =>
+            model.removeInherentSpellEffect(index),
+        onEffectUpdated: (index, effect, model) =>
+            model.updateInherentSpellEffect(index, effect),
+        onEffectAdded: (effect, model) => model.addInherentSpellEffect(effect),
+      ),
+      RitualModifierList(
+        key: Key("InherentModifiers"),
+        onModifierDeleted: (index, model) =>
+            model.removeInherentModifier(index),
+        onModifierUpdated: (index, modifier, model) =>
+            model.updateInherentModifier(index, modifier),
+        onModifierAdded: (name, model) => model.addInherentModifier(name),
+      ),
       IntrinsicHeight(
         child: Row(
           children: [

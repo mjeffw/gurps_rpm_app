@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/models/delete_button_visible.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
-import 'delete_button.dart';
+import '../models/delete_button_visible.dart';
+import '../models/typedefs.dart';
 import '../utils/utils.dart';
-
-typedef OnEffectUpdated = void Function(int, SpellEffect, CastingModel);
-typedef OnEffectDeleted = void Function(int, CastingModel);
+import 'delete_button.dart';
 
 class SpellEffectEditor extends StatelessWidget {
   SpellEffectEditor({
-    @required Key key,
+    Key key,
     @required this.effect,
     @required this.index,
     @required this.onEffectUpdated,
     @required this.onEffectDeleted,
-  }) : super(key: key);
+  }) : super(key: key ?? UniqueKey());
 
   final SpellEffect effect;
   final int index;
@@ -68,16 +66,20 @@ class SpellEffectEditor extends StatelessWidget {
               if (deleteVisible.value && isMediumScreen(context))
                 DeleteButton(
                   key: Key('$_keyText-DEL'),
-                  onPressed: () => onEffectDeleted(
-                    index,
-                    _model(context),
-                  ),
+                  onPressed: () => _deleteEffect(context),
                 ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _deleteEffect(BuildContext context) {
+    SpellEffect effect = _model(context).inherentSpellEffects[index];
+    onEffectDeleted(index, _model(context));
+    Scaffold.of(context).showSnackBar(
+        SnackBar(content: Text('Inherent Effect $effect deleted')));
   }
 
   CastingModel _model(BuildContext context) =>

@@ -5,17 +5,22 @@ import 'package:gurps_dart/gurps_dart.dart';
 import 'package:gurps_dice/gurps_dice.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
+import '../../models/typedefs.dart';
+import '../../utils/utils.dart';
 import '../delete_button.dart';
 import '../dice_spinner.dart';
 import '../dynamic_list_header.dart';
-import '../../utils/utils.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class DamageRow extends ModifierRow {
-  DamageRow({RitualModifier modifier, int index})
+  DamageRow(
+      {RitualModifier modifier, int index, OnModifierUpdated onModifierUpdated})
       : assert(modifier is Damage),
-        super(modifier: modifier, index: index);
+        super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   Damage get damage => super.modifier;
 

@@ -156,7 +156,6 @@ void main() {
                 children: [
                   Expanded(
                     child: SpellEffectEditor(
-                      key: Key('Editor'),
                       effect: model.inherentSpellEffects[0],
                       index: 0,
                       onEffectDeleted: (index, model) {},

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
+import '../../models/typedefs.dart';
 import '../arrow_button.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class RangeRow extends ModifierRow {
-  RangeRow({Range modifier, int index})
-      : super(modifier: modifier, index: index);
+  RangeRow({Range modifier, int index, OnModifierUpdated onModifierUpdated})
+      : super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   Range get _range => super.modifier;
 

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/widgets/modifier_widgets/editor_dialog.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
-import '../int_spinner.dart';
+import '../../models/typedefs.dart';
 import '../../utils/utils.dart';
+import '../int_spinner.dart';
+import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 const rangeLabels = <BestowsRange, String>{
@@ -13,9 +14,13 @@ const rangeLabels = <BestowsRange, String>{
 };
 
 class BestowsRow extends ModifierRow {
-  BestowsRow({RitualModifier modifier, int index})
+  BestowsRow(
+      {RitualModifier modifier, int index, OnModifierUpdated onModifierUpdated})
       : assert(modifier is Bestows),
-        super(modifier: modifier, index: index);
+        super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   Bestows get _bestows => super.modifier;
 

@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:gurps_dice/gurps_dice.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
-import '../dice_spinner.dart';
+import '../../models/typedefs.dart';
 import '../../utils/utils.dart';
+import '../dice_spinner.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class HealingRow extends ModifierRow {
-  HealingRow({Healing modifier, int index})
-      : super(modifier: modifier, index: index);
+  HealingRow({Healing modifier, int index, OnModifierUpdated onModifierUpdated})
+      : super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   Healing get _healing => super.modifier;
 

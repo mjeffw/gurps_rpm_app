@@ -5,13 +5,21 @@ import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
 import '../models/delete_button_visible.dart';
+import '../models/typedefs.dart';
 import 'dynamic_list_header.dart';
 import 'spell_effects_editor.dart';
 
 class SpellEffectList extends StatelessWidget {
   const SpellEffectList({
     Key key,
+    @required this.onEffectDeleted,
+    @required this.onEffectUpdated,
+    @required this.onEffectAdded,
   }) : super(key: key);
+
+  final OnEffectDeleted onEffectDeleted;
+  final OnEffectUpdated onEffectUpdated;
+  final OnEffectAdded onEffectAdded;
 
   static List<String> _pathOptions = [
     'Body',
@@ -31,10 +39,8 @@ class SpellEffectList extends StatelessWidget {
         title: 'Select Path:',
         items: _pathOptions,
         selectedItem: 'Body',
-        onChanged: (value) {
-          var model = Provider.of<CastingModel>(context, listen: false);
-          model.addInherentSpellEffect(value);
-        });
+        onChanged: (value) => onEffectAdded(
+            value, Provider.of<CastingModel>(context, listen: false)));
   }
 
   String get _keyText =>
@@ -63,13 +69,10 @@ class SpellEffectList extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: effects.length,
                 itemBuilder: (_, index) => SpellEffectEditor(
-                  key: UniqueKey(),
                   effect: effects[index],
                   index: index,
-                  onEffectDeleted: (index, model) =>
-                      _deleteAction(index, model, context),
-                  onEffectUpdated: (index, effect, model) =>
-                      model.updateInherentSpellEffect(index, effect),
+                  onEffectDeleted: onEffectDeleted,
+                  onEffectUpdated: onEffectUpdated,
                 ),
               );
             },
@@ -77,12 +80,5 @@ class SpellEffectList extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void _deleteAction(int index, CastingModel model, BuildContext context) {
-    SpellEffect effect = model.inherentSpellEffects[index];
-    model.removeInherentSpellEffect(index);
-    Scaffold.of(context)
-        .showSnackBar(SnackBar(content: Text('Effect $effect deleted')));
   }
 }

@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/widgets/modifier_widgets/editor_dialog.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
+import '../../models/typedefs.dart';
 import '../int_spinner.dart';
+import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class ExtraEnergyRow extends ModifierRow {
-  ExtraEnergyRow({ExtraEnergy modifier, int index})
-      : super(modifier: modifier, index: index);
+  ExtraEnergyRow(
+      {ExtraEnergy modifier, int index, OnModifierUpdated onModifierUpdated})
+      : super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   ExtraEnergy get _energy => super.modifier;
 
