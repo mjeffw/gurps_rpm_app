@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
+import 'package:url_launcher/link.dart';
 
 import '../models/casting_model.dart';
-import '../widgets/dynamic_list_header.dart';
+import '../widgets/markdown_text_with_copy.dart';
 import '../widgets/provider_aware_textfield.dart';
 import '../widgets/ritual_modifier_list.dart';
 import '../widgets/spell_effect_list.dart';
 
+const url = 'https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf';
+
 class CreateRitualPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => CastingModel(),
-      builder: (context, _) => SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-          child: CreateRitualPanel(),
-        ),
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        child: CreateRitualPanel(),
       ),
     );
   }
@@ -41,13 +41,11 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
     super.dispose();
   }
 
-  void _titleUpdated(String value) async {
-    Provider.of<CastingModel>(context, listen: false).name = value;
-  }
+  void _titleUpdated(String value) async =>
+      Provider.of<CastingModel>(context, listen: false).name = value;
 
-  void _notesUpdated(String value) async {
-    Provider.of<CastingModel>(context, listen: false).notes = value;
-  }
+  void _notesUpdated(String value) async =>
+      Provider.of<CastingModel>(context, listen: false).notes = value;
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +62,26 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
           border: const OutlineInputBorder(),
         ),
       ),
-      SpellEffectList(),
-      RitualModifierList(),
+      SpellEffectList(
+        key: Key('InherentSpellEffects'),
+        title: 'Spell Effects',
+        selector: (_, model) => model.inherentSpellEffects,
+        onEffectDeleted: (index, model) =>
+            model.removeInherentSpellEffect(index),
+        onEffectUpdated: (index, effect, model) =>
+            model.updateInherentSpellEffect(index, effect),
+        onEffectAdded: (effect, model) => model.addInherentSpellEffect(effect),
+      ),
+      RitualModifierList(
+        key: Key('InherentModifiers'),
+        title: 'Inherent Modifiers',
+        selector: (_, model) => model.inherentModifiers,
+        onModifierDeleted: (index, model) =>
+            model.removeInherentModifier(index),
+        onModifierUpdated: (index, modifier, model) =>
+            model.updateInherentModifier(index, modifier),
+        onModifierAdded: (name, model) => model.addInherentModifier(name),
+      ),
       IntrinsicHeight(
         child: Row(
           children: [
@@ -86,29 +102,69 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
           ],
         ),
       ),
-      ExpansionTile(
-        tilePadding: EdgeInsets.symmetric(horizontal: 0.0),
-        title:
-            Text('Description', style: TextStyle(fontStyle: FontStyle.italic)),
-        initiallyExpanded: false,
-        children: [
-          ProviderSelectorTextField<CastingModel>(
-            valueProvider: (context, model) => (model as CastingModel).notes,
-            maxLines: 6,
-            onSubmitted: _notesUpdated,
-            style: textTheme.headline5,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-            ),
+      Container(
+        color: Theme.of(context).accentColor.withOpacity(0.05),
+        child: Tooltip(
+          message: 'Tap to open editor',
+          child: ExpansionTile(
+            tilePadding: EdgeInsets.symmetric(horizontal: 0.0),
+            title: Text('Description',
+                style: TextStyle(fontStyle: FontStyle.italic)),
+            initiallyExpanded: false,
+            children: [
+              ProviderSelectorTextField<CastingModel>(
+                valueProvider: (context, model) =>
+                    (model as CastingModel).notes,
+                maxLines: 6,
+                onSubmitted: _notesUpdated,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              Link(
+                uri: Uri.parse(url),
+                target: LinkTarget.blank,
+                builder: (_, followLink) => GestureDetector(
+                  onTap: followLink,
+                  child: Text('Use Markdown syntax'),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
       Text(
         'Typical Casting:',
         style: textTheme.subtitle1.copyWith(fontStyle: FontStyle.italic),
       ),
-      DynamicListHeader(title: 'Additional Effects:'),
-      DynamicListHeader(title: 'Additional Modifiers:'),
+      SpellEffectList(
+        key: Key('AdditionalSpellEffects'),
+        title: 'Additional Effects',
+        selector: (_, model) => model.additionalSpellEffects,
+        onEffectAdded: (effect, model) =>
+            model.addAdditionalSpellEffect(effect),
+        onEffectDeleted: (index, model) =>
+            model.removeAdditionalSpellEffect(index),
+        onEffectUpdated: (index, effect, model) =>
+            model.updateAdditionalSpellEffect(index, effect),
+      ),
+      RitualModifierList(
+        title: 'Additional Modifiers',
+        selector: (_, model) => model.addtionalModifiers,
+        onModifierDeleted: (index, model) =>
+            model.removeAdditionalModifier(index),
+        onModifierUpdated: (index, modifier, model) =>
+            model.updateAdditionalModifier(index, modifier),
+        onModifierAdded: (name, model) => model.addAdditionalModifier(name),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 12.0),
+        child: Divider(),
+      ),
+      Selector<CastingModel, String>(
+        selector: (_, model) => model.formattedText,
+        builder: (context, text, child) => MarkdownTextWithCopy(text: text),
+      ),
     ];
 
     return Column(

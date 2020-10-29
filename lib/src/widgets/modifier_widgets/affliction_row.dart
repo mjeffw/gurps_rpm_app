@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead_web/flutter_typeahead.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
-import '../int_spinner.dart';
+import '../../models/typedefs.dart';
 import '../../utils/utils.dart';
+import '../int_spinner.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class AfflictionStunRow extends ModifierRow {
-  const AfflictionStunRow({RitualModifier modifier, int index})
+  const AfflictionStunRow(
+      {RitualModifier modifier, int index, OnModifierUpdated onModifierUpdated})
       : assert(modifier is AfflictionStun),
-        super(index: index, modifier: modifier);
+        super(
+            index: index,
+            modifier: modifier,
+            onModifierUpdated: onModifierUpdated);
 
   @override
   List<Widget> buildModifierRowWidgets(BuildContext context) => [];
@@ -28,9 +33,13 @@ class AfflictionStunRow extends ModifierRow {
 }
 
 class AfflictionRow extends ModifierRow {
-  const AfflictionRow({RitualModifier modifier, int index})
+  const AfflictionRow(
+      {RitualModifier modifier, int index, OnModifierUpdated onModifierUpdated})
       : assert(modifier is Affliction),
-        super(modifier: modifier, index: index);
+        super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   Affliction get _affliction => super.modifier;
 

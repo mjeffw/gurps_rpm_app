@@ -7,50 +7,27 @@ import 'package:provider/provider.dart';
 import '../models/casting_model.dart';
 import '../models/delete_button_visible.dart';
 import '../models/ritual_factory.dart';
+import '../models/typedefs.dart';
+import '../utils/utils.dart';
 import 'delete_button.dart';
 import 'dynamic_list_header.dart';
-import 'modifier_widgets/affliction_row.dart';
-import 'modifier_widgets/altered_traits_row.dart';
-import 'modifier_widgets/area_effect_row.dart';
-import 'modifier_widgets/bestows_row.dart';
-import 'modifier_widgets/damage_row.dart';
-import 'modifier_widgets/duration_row.dart';
-import 'modifier_widgets/extra_energy_row.dart';
-import 'modifier_widgets/healing_row.dart';
-import 'modifier_widgets/meta_magic_row.dart';
-import 'modifier_widgets/range_crosstime_row.dart';
-import 'modifier_widgets/range_dimensional_row.dart';
-import 'modifier_widgets/range_info_row.dart';
-import 'modifier_widgets/range_row.dart';
-import 'modifier_widgets/speed_row.dart';
-import 'modifier_widgets/subject_weight_row.dart';
-import '../utils/utils.dart';
-
-typedef WidgetBuilder = Widget Function(RitualModifier, int);
-
-final Map<Type, WidgetBuilder> _map = {
-  AfflictionStun: (mod, i) => AfflictionStunRow(modifier: mod, index: i),
-  Affliction: (mod, i) => AfflictionRow(modifier: mod, index: i),
-  AlteredTraits: (mod, i) => AlteredTraitsRow(modifier: mod, index: i),
-  AreaOfEffect: (mod, i) => AreaOfEffectRow(modifier: mod, index: i),
-  Bestows: (mod, i) => BestowsRow(modifier: mod, index: i),
-  Damage: (mod, i) => DamageRow(modifier: mod, index: i),
-  DurationModifier: (mod, i) => DurationRow(modifier: mod, index: i),
-  ExtraEnergy: (mod, i) => ExtraEnergyRow(modifier: mod, index: i),
-  Healing: (mod, i) => HealingRow(modifier: mod, index: i),
-  MetaMagic: (mod, i) => MetaMagicRow(modifier: mod, index: i),
-  Range: (mod, i) => RangeRow(modifier: mod, index: i),
-  RangeInfo: (mod, i) => RangeInfoRow(modifier: mod, index: i),
-  RangeCrossTime: (mod, i) => RangeCrossTimeRow(modifier: mod, index: i),
-  RangeDimensional: (mod, i) => RangeDimensionalRow(modifier: mod, index: i),
-  Speed: (mod, i) => SpeedRow(modifier: mod, index: i),
-  SubjectWeight: (mod, i) => SubjectWeightRow(modifier: mod, index: i),
-};
+import 'modifier_widgets/modifier_row.dart';
 
 class RitualModifierList extends StatelessWidget {
   const RitualModifierList({
     Key key,
+    @required this.onModifierDeleted,
+    @required this.onModifierAdded,
+    @required this.onModifierUpdated,
+    @required this.title,
+    @required this.selector,
   }) : super(key: key);
+
+  final OnModifierDeleted onModifierDeleted;
+  final OnModifierAdded onModifierAdded;
+  final OnModifierUpdated onModifierUpdated;
+  final ModifierSelector selector;
+  final String title;
 
   Future<void> _addModifier(BuildContext context) async {
     showMaterialSelectionPicker(
@@ -58,8 +35,8 @@ class RitualModifierList extends StatelessWidget {
         title: 'Select Modifier:',
         items: modifierFactories.keys.toList(),
         selectedItem: AfflictionStun.label,
-        onChanged: (value) => Provider.of<CastingModel>(context, listen: false)
-            .addInherentModifier(value));
+        onChanged: (value) => onModifierAdded(
+            value, Provider.of<CastingModel>(context, listen: false)));
   }
 
   @override
@@ -70,14 +47,14 @@ class RitualModifierList extends StatelessWidget {
         children: [
           Consumer<DeleteButtonVisible>(
             builder: (_, deleteVisible, __) => DynamicListHeader(
-              title: 'Inherent Modifiers:',
+              title: title,
               deleteActive: deleteVisible.value,
               onAddPressed: () => _addModifier(context),
               onDelPressed: () => deleteVisible.value = !deleteVisible.value,
             ),
           ),
           Selector<CastingModel, List<RitualModifier>>(
-            selector: (_, model) => model.inherentModifiers,
+            selector: selector,
             builder: (context, modifiers, child) {
               return ListView.builder(
                 shrinkWrap: true,
@@ -85,6 +62,8 @@ class RitualModifierList extends StatelessWidget {
                 itemBuilder: (_, index) => RitualModifierLine(
                   modifier: modifiers[index],
                   index: index,
+                  onModifierDeleted: onModifierDeleted,
+                  onModifierUpdated: onModifierUpdated,
                 ),
               );
             },
@@ -96,12 +75,21 @@ class RitualModifierList extends StatelessWidget {
 }
 
 class RitualModifierLine extends StatelessWidget {
-  const RitualModifierLine({this.modifier, this.index});
+  const RitualModifierLine({
+    @required this.modifier,
+    @required this.index,
+    @required this.onModifierDeleted,
+    @required this.onModifierUpdated,
+  });
 
   final int index;
   final RitualModifier modifier;
+  final OnModifierDeleted onModifierDeleted;
+  final OnModifierUpdated onModifierUpdated;
 
-  Widget buildModifierEditor() => _map[modifier.runtimeType](modifier, index);
+  Widget buildModifierEditor() => ModifierRow.type(modifier.runtimeType,
+      modifier: modifier, index: index, onModifierUpdated: onModifierUpdated);
+//  _map[modifier.runtimeType](modifier, index);
 
   @override
   Widget build(BuildContext context) {
@@ -131,8 +119,7 @@ class RitualModifierLine extends StatelessWidget {
   }
 
   void _deleteAction(BuildContext context) {
-    Provider.of<CastingModel>(context, listen: false)
-        .removeInherentModifier(index);
+    onModifierDeleted(index, Provider.of<CastingModel>(context, listen: false));
 
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text('Modifier ${modifier.name} deleted'),

@@ -54,6 +54,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             child: Column(
               children: [
                 DrawerHeader(
+                  decoration: BoxDecoration(color: Colors.orange[800]),
                   child: Center(
                     child: widget.title,
                   ),
@@ -91,6 +92,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     if (isMediumScreen(context)) {
       return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.orange[800],
           title: widget.title,
           actions: widget.actions,
         ),
@@ -127,6 +129,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     return Scaffold(
       body: widget.body,
       appBar: AppBar(
+        backgroundColor: Colors.orange[800],
         title: widget.title,
         actions: widget.actions,
       ),

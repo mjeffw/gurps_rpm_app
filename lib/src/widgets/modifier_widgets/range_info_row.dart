@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
+import '../../models/typedefs.dart';
 import '../arrow_button.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class RangeInfoRow extends ModifierRow {
-  RangeInfoRow({RangeInfo modifier, int index})
-      : super(modifier: modifier, index: index);
+  RangeInfoRow(
+      {RangeInfo modifier, int index, OnModifierUpdated onModifierUpdated})
+      : super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   RangeInfo get _range => super.modifier;
 

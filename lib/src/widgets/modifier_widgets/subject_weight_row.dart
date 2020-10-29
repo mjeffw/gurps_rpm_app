@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
+import '../../models/typedefs.dart';
 import '../arrow_button.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class SubjectWeightRow extends ModifierRow {
-  SubjectWeightRow({SubjectWeight modifier, int index})
-      : super(modifier: modifier, index: index);
+  SubjectWeightRow(
+      {SubjectWeight modifier, int index, OnModifierUpdated onModifierUpdated})
+      : super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   SubjectWeight get _range => super.modifier;
 

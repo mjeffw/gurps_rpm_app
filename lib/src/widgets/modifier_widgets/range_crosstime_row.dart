@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
+import '../../models/typedefs.dart';
 import '../arrow_button.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class RangeCrossTimeRow extends ModifierRow {
-  RangeCrossTimeRow({RangeCrossTime modifier, int index})
-      : super(modifier: modifier, index: index);
+  RangeCrossTimeRow(
+      {RangeCrossTime modifier, int index, OnModifierUpdated onModifierUpdated})
+      : super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   RangeCrossTime get _range => super.modifier;
 

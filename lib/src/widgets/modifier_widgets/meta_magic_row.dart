@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/widgets/int_spinner.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
+import '../../models/typedefs.dart';
+import '../int_spinner.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class MetaMagicRow extends ModifierRow {
-  MetaMagicRow({MetaMagic modifier, int index})
-      : super(modifier: modifier, index: index);
+  MetaMagicRow(
+      {MetaMagic modifier, int index, OnModifierUpdated onModifierUpdated})
+      : super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   MetaMagic get _energy => super.modifier;
 

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
-import '../int_spinner.dart';
+import '../../models/typedefs.dart';
 import '../../utils/utils.dart';
+import '../int_spinner.dart';
 import 'editor_dialog.dart';
 import 'modifier_row.dart';
 
 class AlteredTraitsRow extends ModifierRow {
-  AlteredTraitsRow({RitualModifier modifier, int index})
+  AlteredTraitsRow(
+      {RitualModifier modifier, int index, OnModifierUpdated onModifierUpdated})
       : assert(modifier is AlteredTraits),
-        super(modifier: modifier, index: index);
+        super(
+            modifier: modifier,
+            index: index,
+            onModifierUpdated: onModifierUpdated);
 
   AlteredTraits get alteredTrait => super.modifier;
 

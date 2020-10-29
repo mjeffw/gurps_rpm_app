@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:gurps_rpm_app/src/models/delete_button_visible.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/casting_model.dart';
-import 'delete_button.dart';
+import '../models/delete_button_visible.dart';
+import '../models/typedefs.dart';
 import '../utils/utils.dart';
-
-typedef OnEffectUpdated = void Function(int, SpellEffect, CastingModel);
-typedef OnEffectDeleted = void Function(int, CastingModel);
+import 'delete_button.dart';
 
 class SpellEffectEditor extends StatelessWidget {
   SpellEffectEditor({
-    @required Key key,
+    Key key,
     @required this.effect,
     @required this.index,
     @required this.onEffectUpdated,
     @required this.onEffectDeleted,
-  }) : super(key: key);
+  }) : super(key: key ?? UniqueKey());
 
   final SpellEffect effect;
   final int index;
@@ -44,21 +42,22 @@ class SpellEffectEditor extends StatelessWidget {
               DropdownButton(
                 key: Key('$_keyText-LEVEL'),
                 items: _levelItems(context),
-                onChanged: (value) {
-                  print('');
-                  var model = Provider.of<CastingModel>(context, listen: false);
-                  model.updateInherentSpellEffect(
-                      index, effect.withLevel(value));
-                },
+                onChanged: (value) => onEffectUpdated(
+                  index,
+                  effect.withLevel(value),
+                  _model(context),
+                ),
                 value: effect.level,
               ),
               rowSpacer,
               DropdownButton(
                 key: Key('$_keyText-EFFECT'),
                 items: _effectItems(context),
-                onChanged: (value) => Provider.of<CastingModel>(context,
-                        listen: false)
-                    .updateInherentSpellEffect(index, effect.withEffect(value)),
+                onChanged: (value) => onEffectUpdated(
+                  index,
+                  effect.withEffect(value),
+                  _model(context),
+                ),
                 value: effect.effect,
               ),
               rowSpacer,
@@ -67,7 +66,7 @@ class SpellEffectEditor extends StatelessWidget {
               if (deleteVisible.value && isMediumScreen(context))
                 DeleteButton(
                   key: Key('$_keyText-DEL'),
-                  onPressed: () => _deleteAction(context),
+                  onPressed: () => _deleteEffect(context),
                 ),
             ],
           ),
@@ -75,6 +74,16 @@ class SpellEffectEditor extends StatelessWidget {
       ),
     );
   }
+
+  void _deleteEffect(BuildContext context) {
+    SpellEffect effect = _model(context).inherentSpellEffects[index];
+    onEffectDeleted(index, _model(context));
+    Scaffold.of(context).showSnackBar(
+        SnackBar(content: Text('Inherent Effect $effect deleted')));
+  }
+
+  CastingModel _model(BuildContext context) =>
+      Provider.of<CastingModel>(context, listen: false);
 
   /// Builds the list of "Levels" (Greater, Lesser) to populate the Levels dropdown menu.
   List<DropdownMenuItem> _levelItems(BuildContext context) {
@@ -107,7 +116,6 @@ class SpellEffectEditor extends StatelessWidget {
   }
 
   void _deleteAction(BuildContext context) {
-    print('delete');
     Provider.of<CastingModel>(context, listen: false)
         .removeInherentSpellEffect(index);
     ScaffoldState scaffold = Scaffold.of(context);
