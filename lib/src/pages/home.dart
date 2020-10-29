@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return AdaptiveScaffold(
-      title: Text('GURPS: Ritual Path Magic'),
+      title: Text('GURPS: Ritual Path Magic (BETA)'),
       currentIndex: _pageIndex,
       destinations: [
         AdaptiveScaffoldDestination(

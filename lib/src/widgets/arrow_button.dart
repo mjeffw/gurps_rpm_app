@@ -19,7 +19,7 @@ class RightArrowButton extends StatelessWidget {
   /// Overrride to set a different icon.
   IconData _iconData() => Icons.play_arrow;
 
-  Widget _buildIcon(IconData icon) => Icon(icon, color: Colors.blue);
+  Widget _buildIcon(IconData icon) => Icon(icon, color: Colors.cyan);
 }
 
 class DoubleRightArrowButton extends RightArrowButton {

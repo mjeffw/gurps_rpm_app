@@ -42,6 +42,7 @@ class DynamicListHeader extends StatelessWidget {
               onPressed: onDelPressed,
             ),
           IconButton(
+            tooltip: 'Tap to add an item',
             key: ValueKey<String>('$title-ADD'),
             icon: Icon(
               Icons.add_box_rounded,

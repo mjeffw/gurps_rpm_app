@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
+import 'package:url_launcher/link.dart';
 
 import '../models/casting_model.dart';
+import '../widgets/markdown_text_with_copy.dart';
 import '../widgets/provider_aware_textfield.dart';
 import '../widgets/ritual_modifier_list.dart';
 import '../widgets/spell_effect_list.dart';
+
+const url = 'https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf';
 
 class CreateRitualPage extends StatelessWidget {
   @override
@@ -40,13 +44,11 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
     super.dispose();
   }
 
-  void _titleUpdated(String value) async {
-    Provider.of<CastingModel>(context, listen: false).name = value;
-  }
+  void _titleUpdated(String value) async =>
+      Provider.of<CastingModel>(context, listen: false).name = value;
 
-  void _notesUpdated(String value) async {
-    Provider.of<CastingModel>(context, listen: false).notes = value;
-  }
+  void _notesUpdated(String value) async =>
+      Provider.of<CastingModel>(context, listen: false).notes = value;
 
   @override
   Widget build(BuildContext context) {
@@ -103,22 +105,36 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
           ],
         ),
       ),
-      ExpansionTile(
-        tilePadding: EdgeInsets.symmetric(horizontal: 0.0),
-        title:
-            Text('Description', style: TextStyle(fontStyle: FontStyle.italic)),
-        initiallyExpanded: false,
-        children: [
-          ProviderSelectorTextField<CastingModel>(
-            valueProvider: (context, model) => (model as CastingModel).notes,
-            maxLines: 6,
-            onSubmitted: _notesUpdated,
-            style: textTheme.headline5,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-            ),
+      Container(
+        color: Theme.of(context).accentColor.withOpacity(0.05),
+        child: Tooltip(
+          message: 'Tap to open editor',
+          child: ExpansionTile(
+            tilePadding: EdgeInsets.symmetric(horizontal: 0.0),
+            title: Text('Description',
+                style: TextStyle(fontStyle: FontStyle.italic)),
+            initiallyExpanded: false,
+            children: [
+              ProviderSelectorTextField<CastingModel>(
+                valueProvider: (context, model) =>
+                    (model as CastingModel).notes,
+                maxLines: 6,
+                onSubmitted: _notesUpdated,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              Link(
+                uri: Uri.parse(url),
+                target: LinkTarget.blank,
+                builder: (_, followLink) => GestureDetector(
+                  onTap: followLink,
+                  child: Text('Use Markdown syntax'),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
       Text(
         'Typical Casting:',
@@ -150,7 +166,14 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
       ),
       Selector<CastingModel, String>(
         selector: (_, model) => model.formattedText,
-        builder: (context, text, child) => Text(text),
+        builder: (context, text, child) => Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 1.0,
+            ),
+          ),
+          child: MarkdownTextWithCopy(text: text),
+        ),
       ),
     ];
 

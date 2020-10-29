@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
+import '../utils/markdown_exporter.dart';
 import 'ritual_factory.dart';
 
 class CastingModel with ChangeNotifier {
@@ -38,7 +39,11 @@ class CastingModel with ChangeNotifier {
   // TODO when calculating the number of greater effects for **this casting**, include greater effects on the casting + the ritual.
   int get greaterEffects => _ritual.greaterEffects;
 
-  String get formattedText => casting.formattedText();
+  String get formattedText {
+    CastingExporter exporter = MyMarkdownCastingExporter();
+    casting.exportTo(exporter);
+    return exporter.toString();
+  }
 
   // == Inherent SpellEffect mutators ==
 
