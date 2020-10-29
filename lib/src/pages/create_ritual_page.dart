@@ -163,14 +163,7 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
       ),
       Selector<CastingModel, String>(
         selector: (_, model) => model.formattedText,
-        builder: (context, text, child) => Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              width: 1.0,
-            ),
-          ),
-          child: MarkdownTextWithCopy(text: text),
-        ),
+        builder: (context, text, child) => MarkdownTextWithCopy(text: text),
       ),
     ];
 
