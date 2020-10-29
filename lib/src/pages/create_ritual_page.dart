@@ -14,13 +14,10 @@ const url = 'https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf';
 class CreateRitualPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => CastingModel(),
-      builder: (context, _) => SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-          child: CreateRitualPanel(),
-        ),
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        child: CreateRitualPanel(),
       ),
     );
   }
