@@ -59,8 +59,11 @@ class SpellEffectList extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: effects.length,
                 itemBuilder: (_, index) => SpellEffectEditor(
+                  key: Key('InherentSpellEffectEditor'),
                   effect: effects[index],
                   index: index,
+                  onEffectDeleted: (index, model) {},
+                  onEffectUpdated: (index, effect, model) {},
                 ),
               );
             },

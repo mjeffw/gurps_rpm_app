@@ -110,7 +110,7 @@ class SpellEffectEditor extends StatelessWidget {
     print('delete');
     Provider.of<CastingModel>(context, listen: false)
         .removeInherentSpellEffect(index);
-    Scaffold.of(context)
-        .showSnackBar(SnackBar(content: Text('Effect $effect deleted')));
+    ScaffoldState scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(SnackBar(content: Text('Effect $effect deleted')));
   }
 }

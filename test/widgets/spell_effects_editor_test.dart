@@ -32,6 +32,8 @@ void main() {
                         level: Level.greater,
                       ),
                       index: 0,
+                      onEffectDeleted: (index, model) {},
+                      onEffectUpdated: (index, effect, model) {},
                     ),
                   ),
                 ],
@@ -65,6 +67,8 @@ void main() {
                       key: Key('Editor'),
                       effect: model.inherentSpellEffects[0],
                       index: 0,
+                      onEffectDeleted: (index, model) {},
+                      onEffectUpdated: (index, effect, model) {},
                     ),
                   ),
                 ],
@@ -80,8 +84,7 @@ void main() {
           equals(Level.lesser));
 
       await tester.tap(dropdown);
-      await tester.pump();
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(Key('Editor-LEVEL[Greater]')).last);
 
@@ -109,6 +112,8 @@ void main() {
                       key: Key('Editor'),
                       effect: model.inherentSpellEffects[0],
                       index: 0,
+                      onEffectDeleted: (index, model) {},
+                      onEffectUpdated: (index, effect, model) {},
                     ),
                   ),
                 ],
@@ -124,8 +129,7 @@ void main() {
           equals(Effect.control));
 
       await tester.tap(dropdown);
-      await tester.pump();
-      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.byKey(Key('Editor-EFFECT[Transform]')).last);
 
@@ -151,6 +155,8 @@ void main() {
                       key: Key('Editor'),
                       effect: model.inherentSpellEffects[0],
                       index: 0,
+                      onEffectUpdated: (index, effect, model) {},
+                      onEffectDeleted: (index, model) {},
                     ),
                   ),
                 ],
@@ -239,6 +245,8 @@ void main() {
       await tester.tap(find.byKey(Key('Editor-DEL')));
 
       expect(model.inherentSpellEffects, isEmpty);
+
+      // TODO verify Scaffold.showSnackBar was shown
     });
 
     testWidgets('should swipe to delete', (WidgetTester tester) async {
@@ -281,6 +289,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(model.inherentSpellEffects, isEmpty);
+
+      // TODO verify Scaffold.showSnackBar was shown
     });
   });
 }
