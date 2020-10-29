@@ -68,12 +68,8 @@ void main() {
                       effect: model.inherentSpellEffects[0],
                       index: 0,
                       onEffectDeleted: (index, model) {},
-<<<<<<< HEAD
-                      onEffectUpdated: (index, effect, model) {},
-=======
                       onEffectUpdated: (index, effect, model) =>
                           model.updateInherentSpellEffect(index, effect),
->>>>>>> 88f530647997dfa710bdb1ec2b1d52d929d73e4a
                     ),
                   ),
                 ],
@@ -118,12 +114,8 @@ void main() {
                       effect: model.inherentSpellEffects[0],
                       index: 0,
                       onEffectDeleted: (index, model) {},
-<<<<<<< HEAD
-                      onEffectUpdated: (index, effect, model) {},
-=======
                       onEffectUpdated: (index, effect, model) =>
                           model.updateInherentSpellEffect(index, effect),
->>>>>>> 88f530647997dfa710bdb1ec2b1d52d929d73e4a
                     ),
                   ),
                 ],
@@ -164,13 +156,8 @@ void main() {
                     child: SpellEffectEditor(
                       effect: model.inherentSpellEffects[0],
                       index: 0,
-<<<<<<< HEAD
-                      onEffectUpdated: (index, effect, model) {},
-                      onEffectDeleted: (index, model) {},
-=======
                       onEffectDeleted: (index, model) {},
                       onEffectUpdated: (index, effect, model) {},
->>>>>>> 88f530647997dfa710bdb1ec2b1d52d929d73e4a
                     ),
                   ),
                 ],
