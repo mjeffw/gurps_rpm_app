@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
 import 'casting_model.dart';
@@ -9,3 +10,8 @@ typedef OnModifierUpdated = void Function(int, RitualModifier, CastingModel);
 typedef OnEffectUpdated = void Function(int, SpellEffect, CastingModel);
 typedef OnEffectDeleted = void Function(int, CastingModel);
 typedef OnEffectAdded = void Function(String, CastingModel);
+
+typedef SpellEffectSelector = List<SpellEffect> Function(
+    BuildContext, CastingModel);
+typedef ModifierSelector = List<RitualModifier> Function(
+    BuildContext, CastingModel);

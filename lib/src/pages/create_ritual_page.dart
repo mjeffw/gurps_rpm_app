@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
 import '../models/casting_model.dart';
-import '../widgets/dynamic_list_header.dart';
 import '../widgets/provider_aware_textfield.dart';
 import '../widgets/ritual_modifier_list.dart';
 import '../widgets/spell_effect_list.dart';
@@ -66,6 +65,8 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
       ),
       SpellEffectList(
         key: Key('InherentSpellEffects'),
+        title: 'Spell Effects',
+        selector: (_, model) => model.inherentSpellEffects,
         onEffectDeleted: (index, model) =>
             model.removeInherentSpellEffect(index),
         onEffectUpdated: (index, effect, model) =>
@@ -73,7 +74,9 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
         onEffectAdded: (effect, model) => model.addInherentSpellEffect(effect),
       ),
       RitualModifierList(
-        key: Key("InherentModifiers"),
+        key: Key('InherentModifiers'),
+        title: 'Inherent Modifiers',
+        selector: (_, model) => model.inherentModifiers,
         onModifierDeleted: (index, model) =>
             model.removeInherentModifier(index),
         onModifierUpdated: (index, modifier, model) =>
@@ -121,8 +124,34 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
         'Typical Casting:',
         style: textTheme.subtitle1.copyWith(fontStyle: FontStyle.italic),
       ),
-      DynamicListHeader(title: 'Additional Effects:'),
-      DynamicListHeader(title: 'Additional Modifiers:'),
+      SpellEffectList(
+        key: Key('AdditionalSpellEffects'),
+        title: 'Additional Effects',
+        selector: (_, model) => model.additionalSpellEffects,
+        onEffectAdded: (effect, model) =>
+            model.addAdditionalSpellEffect(effect),
+        onEffectDeleted: (index, model) =>
+            model.removeAdditionalSpellEffect(index),
+        onEffectUpdated: (index, effect, model) =>
+            model.updateAdditionalSpellEffect(index, effect),
+      ),
+      RitualModifierList(
+        title: 'Additional Modifiers',
+        selector: (_, model) => model.addtionalModifiers,
+        onModifierDeleted: (index, model) =>
+            model.removeAdditionalModifier(index),
+        onModifierUpdated: (index, modifier, model) =>
+            model.updateAdditionalModifier(index, modifier),
+        onModifierAdded: (name, model) => model.addAdditionalModifier(name),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(top: 12.0),
+        child: Divider(),
+      ),
+      Selector<CastingModel, String>(
+        selector: (_, model) => model.formattedText,
+        builder: (context, text, child) => Text(text),
+      ),
     ];
 
     return Column(

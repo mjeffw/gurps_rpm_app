@@ -15,11 +15,15 @@ class SpellEffectList extends StatelessWidget {
     @required this.onEffectDeleted,
     @required this.onEffectUpdated,
     @required this.onEffectAdded,
+    @required this.title,
+    @required this.selector,
   }) : super(key: key);
 
   final OnEffectDeleted onEffectDeleted;
   final OnEffectUpdated onEffectUpdated;
   final OnEffectAdded onEffectAdded;
+  final String title;
+  final SpellEffectSelector selector;
 
   static List<String> _pathOptions = [
     'Body',
@@ -55,14 +59,14 @@ class SpellEffectList extends StatelessWidget {
           Consumer<DeleteButtonVisible>(
             builder: (_, deleteVisible, __) => DynamicListHeader(
               key: Key('$_keyText-HEADER'),
-              title: 'Spell Effects:',
+              title: title,
               deleteActive: deleteVisible.value,
               onAddPressed: () => _addPath(context),
               onDelPressed: () => deleteVisible.value = !deleteVisible.value,
             ),
           ),
           Selector<CastingModel, List<SpellEffect>>(
-            selector: (_, model) => model.inherentSpellEffects,
+            selector: selector,
             builder: (context, effects, child) {
               return ListView.builder(
                 key: Key('$_keyText-LIST'),

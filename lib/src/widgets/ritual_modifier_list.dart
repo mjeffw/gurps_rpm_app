@@ -19,11 +19,15 @@ class RitualModifierList extends StatelessWidget {
     @required this.onModifierDeleted,
     @required this.onModifierAdded,
     @required this.onModifierUpdated,
+    @required this.title,
+    @required this.selector,
   }) : super(key: key);
 
   final OnModifierDeleted onModifierDeleted;
   final OnModifierAdded onModifierAdded;
   final OnModifierUpdated onModifierUpdated;
+  final ModifierSelector selector;
+  final String title;
 
   Future<void> _addModifier(BuildContext context) async {
     showMaterialSelectionPicker(
@@ -43,14 +47,14 @@ class RitualModifierList extends StatelessWidget {
         children: [
           Consumer<DeleteButtonVisible>(
             builder: (_, deleteVisible, __) => DynamicListHeader(
-              title: 'Inherent Modifiers:',
+              title: title,
               deleteActive: deleteVisible.value,
               onAddPressed: () => _addModifier(context),
               onDelPressed: () => deleteVisible.value = !deleteVisible.value,
             ),
           ),
           Selector<CastingModel, List<RitualModifier>>(
-            selector: (_, model) => model.inherentModifiers,
+            selector: selector,
             builder: (context, modifiers, child) {
               return ListView.builder(
                 shrinkWrap: true,
@@ -83,7 +87,7 @@ class RitualModifierLine extends StatelessWidget {
   final OnModifierDeleted onModifierDeleted;
   final OnModifierUpdated onModifierUpdated;
 
-  Widget buildModifierEditor() => ModifierRow.type(RitualModifier,
+  Widget buildModifierEditor() => ModifierRow.type(modifier.runtimeType,
       modifier: modifier, index: index, onModifierUpdated: onModifierUpdated);
 //  _map[modifier.runtimeType](modifier, index);
 

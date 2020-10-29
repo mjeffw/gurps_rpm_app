@@ -120,7 +120,7 @@ abstract class ModifierRow extends StatelessWidget {
             modifier: modifier,
             index: index,
             onModifierUpdated: onModifierUpdated);
-      case Affliction:
+      case Affliction: 
         return AfflictionRow(
             modifier: modifier,
             index: index,

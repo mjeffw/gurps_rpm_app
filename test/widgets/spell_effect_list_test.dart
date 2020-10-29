@@ -23,6 +23,8 @@ void main() {
                   Expanded(
                     child: SpellEffectList(
                       key: Key('SpellEffects'),
+                      title: 'Test',
+                      selector: (_, model) => model.inherentSpellEffects,
                       onEffectDeleted: (index, model) {},
                       onEffectUpdated: (index, effect, model) {},
                       onEffectAdded: (name, model) {},
@@ -63,6 +65,8 @@ void main() {
                   Expanded(
                     child: SpellEffectList(
                       key: Key('SpellEffects'),
+                      title: 'Test',
+                      selector: (_, model) => model.inherentSpellEffects,
                       onEffectDeleted: (index, model) {},
                       onEffectUpdated: (index, effect, model) {},
                       onEffectAdded: (name, model) {},
