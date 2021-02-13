@@ -20,13 +20,13 @@ class EditorDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       actions: [
-        FlatButton(
+        TextButton(
           child: const Text('CANCEL'),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
-        FlatButton(
+        TextButton(
           child: const Text('OK'),
           onPressed: () {
             var copy = provider();

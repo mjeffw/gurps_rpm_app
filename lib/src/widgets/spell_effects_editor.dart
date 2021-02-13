@@ -78,7 +78,7 @@ class SpellEffectEditor extends StatelessWidget {
   void _deleteEffect(BuildContext context) {
     SpellEffect effect = _model(context).inherentSpellEffects[index];
     onEffectDeleted(index, _model(context));
-    Scaffold.of(context).showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Inherent Effect $effect deleted')));
   }
 
@@ -118,7 +118,9 @@ class SpellEffectEditor extends StatelessWidget {
   void _deleteAction(BuildContext context) {
     Provider.of<CastingModel>(context, listen: false)
         .removeInherentSpellEffect(index);
-    ScaffoldState scaffold = Scaffold.of(context);
-    scaffold.showSnackBar(SnackBar(content: Text('Effect $effect deleted')));
+    // ScaffoldState scaffold = Scaffold.of(context);
+    // scaffold.showSnackBar(SnackBar(content: Text('Effect $effect deleted')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Effect $effect deleted')));
   }
 }

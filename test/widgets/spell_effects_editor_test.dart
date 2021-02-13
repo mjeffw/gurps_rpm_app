@@ -234,7 +234,7 @@ void main() {
                             SpellEffect effect =
                                 model.inherentSpellEffects[index];
                             model.removeInherentSpellEffect(index);
-                            Scaffold.of(context).showSnackBar(SnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content: Text('Effect $effect deleted')));
                           },
                           onEffectUpdated: (int, effect, model) {},

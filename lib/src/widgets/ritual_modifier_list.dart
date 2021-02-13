@@ -121,8 +121,7 @@ class RitualModifierLine extends StatelessWidget {
   void _deleteAction(BuildContext context) {
     onModifierDeleted(index, Provider.of<CastingModel>(context, listen: false));
 
-    Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text('Modifier ${modifier.name} deleted'),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Modifier ${modifier.name} deleted')));
   }
 }
