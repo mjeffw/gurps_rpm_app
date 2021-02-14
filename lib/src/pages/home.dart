@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../models/casting_model.dart';
 import '../widgets/thirdparty/adaptive_scaffold.dart';
@@ -32,6 +33,18 @@ class _HomePageState extends State<HomePage> {
       create: (context) => CastingModel(),
       builder: (context, _) => AdaptiveScaffold(
         title: Text('GURPS: Ritual Path Magic (BETA)'),
+        actions: [
+          InkWell(
+            onTap: _launchURL,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Image.asset(
+                'images/BuyMeACoffee_dark@small.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ],
         currentIndex: _pageIndex,
         destinations: [
           AdaptiveScaffoldDestination(
@@ -55,6 +68,15 @@ class _HomePageState extends State<HomePage> {
         },
       ),
     );
+  }
+
+  _launchURL() async {
+    const urlString = 'https://ko-fi.com/nickcoffinpi';
+    if (await canLaunch(urlString)) {
+      await launch(urlString);
+    } else {
+      throw 'Could not launch $urlString';
+    }
   }
 
   Widget _pageAtIndex(int index) {
