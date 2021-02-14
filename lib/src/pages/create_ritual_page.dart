@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gurps_rpm_app/src/utils/selectable_text_exporter.dart';
+import 'package:gurps_rpm_app/src/widgets/casting_summary_text.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/link.dart';
@@ -161,9 +163,10 @@ class _CreateRitualPanelState extends State<CreateRitualPanel> {
         padding: const EdgeInsets.only(top: 12.0),
         child: Divider(),
       ),
-      Selector<CastingModel, String>(
-        selector: (_, model) => model.formattedText,
-        builder: (context, text, child) => MarkdownTextWithCopy(text: text),
+      Selector<CastingModel, SelectableTextExporter>(
+        selector: (_, model) => model.exporter,
+        builder: (context, exporter, child) =>
+            CastingSummaryText(exporter: exporter),
       ),
     ];
 

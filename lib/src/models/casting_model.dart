@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gurps_rpm_model/gurps_rpm_model.dart';
 
+import '../utils/selectable_text_exporter.dart';
 import '../utils/markdown_exporter.dart';
 import 'ritual_factory.dart';
 
@@ -43,6 +44,12 @@ class CastingModel with ChangeNotifier {
     CastingExporter exporter = MyMarkdownCastingExporter();
     casting.exportTo(exporter);
     return exporter.toString();
+  }
+
+  CastingExporter get exporter {
+    SelectableTextExporter _exporter = SelectableTextExporter();
+    casting.exportTo(_exporter);
+    return _exporter;
   }
 
   // == Inherent SpellEffect mutators ==

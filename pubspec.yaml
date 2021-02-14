@@ -29,6 +29,7 @@ dependencies:
   tuple: ^1.0.3
   flutter_markdown: ^0.5.2
   url_launcher: ^5.7.10
+  equatable: ^1.2.6
   gurps_rpm_model:
     version: ^1.0.1
     git:
